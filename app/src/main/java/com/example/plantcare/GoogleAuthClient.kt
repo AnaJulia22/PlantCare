@@ -1,5 +1,6 @@
 package com.example.plantcare
 
+import android.app.Activity
 import android.content.Context
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
@@ -99,7 +100,7 @@ class GoogleAuthClient (
             .build()
 
         return credentialManager.getCredential(
-            request = request, context = context
+            request = request, context = context as Activity
         )
     }
 

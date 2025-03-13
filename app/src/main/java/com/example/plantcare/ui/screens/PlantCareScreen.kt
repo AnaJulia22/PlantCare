@@ -1,4 +1,4 @@
-package com.example.plantcare
+package com.example.plantcare.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
-import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -25,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.NavController
+import com.example.plantcare.R
 
 @Composable
 fun PlantCareScreen(navController: NavController) {
@@ -82,7 +82,7 @@ fun UserProfileSection() {
 @Composable
 fun QuickAccessButtons(navController: NavController) {
     val quickAccessItems = listOf(
-        "Minhas Plantas" to "myPlants",
+        "Minhas Plantas" to "plantList",
         "Cronograma de Rega" to "wateringSchedule",
         "Notificações" to "notifications",
         "Galeria de Time-Lapse" to "timeLapseGallery",
