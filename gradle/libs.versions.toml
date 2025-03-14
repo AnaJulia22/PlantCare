@@ -17,12 +17,15 @@ credentialsPlayServicesAuth = "1.3.0"
 googleid = "1.1.1"
 firebaseFirestoreKtx = "25.1.2"
 firebaseDatabase = "21.0.0"
+mpandroidchartVersion = "v3.1.0"
+navigationCompose = "2.5.3"
 roomRuntime = "2.6.0"
 storage = "1.5.0"
 workRuntimeKtxVersion = "2.8.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
@@ -49,6 +52,7 @@ firebase-database = { group = "com.google.firebase", name = "firebase-database",
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
 androidx-storage = { group = "androidx.test.services", name = "storage", version.ref = "storage" }
+philjay-mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchartVersion" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

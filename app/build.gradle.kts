@@ -78,6 +78,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
+    implementation (libs.philjay.mpandroidchart)
 
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
 
@@ -86,7 +87,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-    implementation("androidx.navigation:navigation-compose:2.5.3")
+    implementation(libs.androidx.navigation.compose)
     implementation("io.coil-kt:coil-compose:2.2.2")
 
     implementation (libs.androidx.work.runtime.ktx)

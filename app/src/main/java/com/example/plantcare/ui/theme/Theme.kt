@@ -9,6 +9,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -32,6 +33,35 @@ private val LightColorScheme = lightColorScheme(
     onSurface = Color(0xFF1C1B1F),
     */
 )
+
+// Cores do tema claro
+private val LightColors = lightColorScheme(
+    primary = Color(0xFF388E3C),
+    secondary = Color(0xFF81C784),
+    tertiary = Color(0xFFC8E6C9),
+    background = Color(0xFFF5F5F5),
+    surface = Color(0xFFFFFFFF),
+    onPrimary = Color.White,
+    onSecondary = Color.Black,
+    onTertiary = Color.Black,
+    onBackground = Color(0xFF212121),
+    onSurface = Color(0xFF212121),
+)
+
+// Cores do tema escuro
+private val DarkColors = darkColorScheme(
+    primary = Color(0xFF4CAF50),
+    secondary = Color(0xFF81C784),
+    tertiary = Color(0xFF2E7D32),
+    background = Color(0xFF121212),
+    surface = Color(0xFF1E1E1E),
+    onPrimary = Color.Black,
+    onSecondary = Color.Black,
+    onTertiary = Color.White,
+    onBackground = Color(0xFFE0E0E0),
+    onSurface = Color(0xFFE0E0E0),
+)
+
 
 @Composable
 fun PlantCareTheme(
