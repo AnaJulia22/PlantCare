@@ -1,19 +1,18 @@
 package com.example.plantcare.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
@@ -27,27 +26,36 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.plantcare.R
+import com.example.plantcare.models.Plant
+import com.example.plantcare.ui.states.PlantListUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlantCareScreen(navController: NavController) {
+fun PlantCareScreen(
+    navController: NavController,
+    onExitToAppClick: () -> Unit = {}
+) {
     Scaffold(
         topBar = {
-            /* Exibir perfil */// Ícone de perfil
-            TopAppBar(title = { Text("Flora Friend") },
-                actions = fun RowScope.() {
-                    // Ícone de perfil
-                    IconButton(onClick = { /* Exibir perfil */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Perfil"
-                        )
-                    }
-                })
+            TopAppBar(
+                title = { Text("Flora Friend") },
+                actions = {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ExitToApp,
+                        contentDescription = "ícone sair do app",
+                        Modifier
+                            .clip(CircleShape)
+                            .clickable { onExitToAppClick() }
+                            .padding(8.dp),
+                    )
+                }
+            )
         },
         bottomBar = {
             NavigationBar {
@@ -77,9 +85,9 @@ fun PlantCareScreen(navController: NavController) {
                 )
             }
         },
-        floatingActionButton = {
+        /*floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* Handle add new plant */ },
+                onClick = { *//* Handle add new plant *//* },
                 modifier = MaterialTheme.colorScheme.primary
             ) {
                 Icon(Icons.Filled.Add, "Adicionar planta")
@@ -87,7 +95,7 @@ fun PlantCareScreen(navController: NavController) {
         },
         bottomBar = {
             BottomNavigationBar(navController)
-        }
+        }*/
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -109,10 +117,12 @@ fun PlantCareScreen(navController: NavController) {
                 HomeMenuButton(
                     icon = Icons.AutoMirrored.Filled.List,
                     text = "Minhas Plantas",
-                    onClick = { /* Navegar para lista de plantas */ }
+                    onClick = {
+                        navController.navigate("plantList")
+                    }
                 )
                 HomeMenuButton(
-                    icon = Icons.Default.WaterDrop,
+                    icon = Icons.Default.DateRange,
                     text = "Cronograma",
                     onClick = { navController.navigate("notifications") }
                 )
@@ -130,7 +140,7 @@ fun PlantCareScreen(navController: NavController) {
                     onClick = { navController.navigate("notifications") }
                 )
                 HomeMenuButton(
-                    icon = Icons.Default.Movie,
+                    icon = Icons.Default.PlayArrow,
                     text = "Time-lapse",
                     onClick = { navController.navigate("timelapse") }
                 )
@@ -143,7 +153,7 @@ fun PlantCareScreen(navController: NavController) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 HomeMenuButton(
-                    icon = Icons.Default.Book,
+                    icon = Icons.Default.Info,
                     text = "Diário",
                     onClick = { navController.navigate("plant_diary") }
                 )
@@ -154,13 +164,52 @@ fun PlantCareScreen(navController: NavController) {
                 )
             }
 
-            // Lista de plantas (exemplo simplificado)
+            /*// Lista de plantas (exemplo simplificado)
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 "Suas Plantas",
                 style = MaterialTheme.typography.headlineSmall
             )
-            // Aqui iria um LazyColumn com a lista de plantas
+            val viewModel = koinViewModel<PlantListViewModel>()
+            val uiState by viewModel.uiState
+                .collectAsState(PlantListUiState())
+            PlantList(
+                uiState = uiState
+            )*/
+        }
+    }
+}
+
+@Composable
+fun PlantList(uiState: PlantListUiState) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        items(uiState.plants) { plant ->
+            PlantItem(plant)
+        }
+    }
+}
+
+@Composable
+fun PlantItem(plant: Plant) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(text = plant.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(text = "Próxima rega: ${plant.nextWatering}", fontSize = 14.sp, color = Color.Gray)
+            }
         }
     }
 }
@@ -220,6 +269,16 @@ fun UserProfileSection() {
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun PreviewPlantCareScreen() {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        PlantCareScreen(
+            navController = NavController(LocalContext.current)
+        )
+    }
+}
+
 @Composable
 fun QuickAccessButtons(navController: NavController) {
     val quickAccessItems = listOf(
@@ -250,36 +309,6 @@ fun QuickAccessButtons(navController: NavController) {
                     modifier = Modifier.padding(16.dp)
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(navController: NavController) {
-    val items = listOf(
-        "Home" to "home",
-        "Notifications" to "notifications",
-        "Settings" to "settings"
-    )
-
-    BottomAppBar(
-        modifier = Modifier.fillMaxWidth(),
-        containerColor = MaterialTheme.colorScheme.primaryContainer,
-        contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-    ) {
-        items.forEach { (title, route) ->
-            NavigationBarItem(
-                icon = {
-                    when (title) {
-                        "Home" -> Icon(Icons.Default.Add, contentDescription = "Home")
-                        "Notifications" -> Icon(Icons.Default.Notifications, contentDescription = "Notifications")
-                        "Settings" -> Icon(Icons.Default.Settings, contentDescription = "Settings")
-                    }
-                },
-                label = { Text(title) },
-                selected = false,
-                onClick = { navController.navigate(route) }
-            )
         }
     }
 }

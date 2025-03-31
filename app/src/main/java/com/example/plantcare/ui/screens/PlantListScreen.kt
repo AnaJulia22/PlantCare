@@ -158,9 +158,6 @@ fun PlantListScreen(
                                     style = TextStyle.Default.copy(fontSize = 18.sp)
                                 )
                             }
-
-
-
                         }
                     }
                 }

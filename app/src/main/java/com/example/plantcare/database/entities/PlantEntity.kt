@@ -16,16 +16,3 @@ data class PlantEntity (
     val isWatered: Boolean = false,
     val imageRes: Int? = 0
 )
-
-@Entity(tableName = "users")
-data class UserEntity(
-    @PrimaryKey
-    val id: String,
-    val name: String,
-    val email: String,
-    val photoUrl: String?,
-    val registrationDate: Long,
-    val darkMode: Boolean,
-    val notificationsEnabled: Boolean,
-    val notificationTime: String
-)

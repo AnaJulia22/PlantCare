@@ -2,11 +2,7 @@ package com.example.plantcare.Repository
 
 import com.example.plantcare.models.Plant
 import com.example.plantcare.database.dao.PlantDao
-import com.example.plantcare.database.dao.UserDao
 import com.example.plantcare.database.entities.PlantEntity
-import com.example.plantcare.database.entities.UserEntity
-import com.example.plantcare.models.User
-import com.example.plantcare.models.UserSettings
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.withContext
 
@@ -41,31 +37,6 @@ class PlantRepository (
 
 }
 
-class UserRepository(private val userDao: UserDao) {
-     suspend fun getUserById(userId: String): User? =
-        userDao.getUserById(userId)?.toUser()
-
-     suspend fun createUser(user: User): String {
-        val userEntity = user.toUserEntity()
-        val id = userDao.insertUser(userEntity)
-        return id.toString()
-    }
-
-     suspend fun updateUser(user: User): Boolean {
-        val userEntity = user.toUserEntity()
-        val rowsAffected = userDao.updateUser(userEntity)
-        return rowsAffected > 0
-    }
-
-     suspend fun deleteUser(userId: String): Boolean {
-        val rowsAffected = userDao.deleteUser(userId)
-        return rowsAffected > 0
-    }
-
-     suspend fun getUserByEmail(email: String): User? =
-        userDao.getUserByEmail(email)?.toUser()
-}
-
 
 fun Plant.toPlantEntity() = PlantEntity(
     id = this.id,
@@ -88,31 +59,3 @@ fun PlantEntity.toPlant() = Plant(
     isWatered = this.isWatered,
     imageRes = this.imageRes
 )
-// Extensão para converter entre User e UserEntity
-fun UserEntity.toUser(): User {
-    return User(
-        id = id,
-        name = name,
-        email = email,
-        photoUrl = photoUrl,
-        registrationDate = registrationDate,
-        settings = UserSettings(
-            darkMode = darkMode,
-            notificationsEnabled = notificationsEnabled,
-            notificationTime = notificationTime
-        )
-    )
-}
-
-fun User.toUserEntity(): UserEntity {
-    return UserEntity(
-        id = id,
-        name = name,
-        email = email,
-        photoUrl = photoUrl,
-        registrationDate = registrationDate,
-        darkMode = settings.darkMode,
-        notificationsEnabled = settings.notificationsEnabled,
-        notificationTime = settings.notificationTime
-    )
-}

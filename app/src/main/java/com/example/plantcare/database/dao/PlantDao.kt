@@ -29,24 +29,3 @@ interface PlantDao {
     suspend fun update(plant: PlantEntity)
 
 }
-
-@Dao
-interface UserDao {
-    @Query("SELECT * FROM users")
-    suspend fun getAllUsers(): List<UserEntity>
-
-    @Query("SELECT * FROM users WHERE id = :userId")
-    suspend fun getUserById(userId: String): UserEntity?
-
-    @Query("SELECT * FROM users WHERE email = :email")
-    suspend fun getUserByEmail(email: String): UserEntity?
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUser(user: UserEntity): Long
-
-    @Update
-    suspend fun updateUser(user: UserEntity): Int
-
-    @Query("DELETE FROM users WHERE id = :userId")
-    suspend fun deleteUser(userId: String): Int
-}

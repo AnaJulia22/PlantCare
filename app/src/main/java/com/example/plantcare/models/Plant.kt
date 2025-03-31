@@ -11,28 +11,9 @@ data class Plant(
     val nextWatering: String,
     val isWatered: Boolean = false,
     val imageRes: Int?
-) {
-
-}
-
-// Modelo de Usuário
-data class User(
-    val id: String,
-    val name: String,
-    val email: String,
-    val photoUrl: String? = null,
-    val registrationDate: Long = System.currentTimeMillis(),
-    val settings: UserSettings = UserSettings()
 )
 
-// Configurações do usuário
-data class UserSettings(
-    val darkMode: Boolean = false,
-    val notificationsEnabled: Boolean = true,
-    val notificationTime: String = "09:00" // Formato HH:MM
-)
-
-data class TimelapseImage(
+/*data class TimelapseImage(
     val url: String,
     val date: Long // timestamp
 )
@@ -44,4 +25,4 @@ data class WateringReminder(
     val scheduledDate: Long, // timestamp
     val completed: Boolean = false,
     val skipped: Boolean = false
-)
+)*/

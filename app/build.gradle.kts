@@ -64,6 +64,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.material)
+    implementation(libs.material.icons.extended.android)
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // 🔹 Adicionando o Credential Manager
     implementation("androidx.credentials:credentials:1.2.0")
@@ -77,8 +80,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-
-    implementation (libs.philjay.mpandroidchart)
 
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
 
