@@ -2,6 +2,7 @@ package com.example.plantcare
 
 import android.app.Application
 import com.example.plantcare.di.appModule
+import com.example.plantcare.di.firebaseModule
 import com.example.plantcare.di.storageModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -16,7 +17,8 @@ class PlantCareApplication: Application()  {
             androidContext(this@PlantCareApplication)
             modules(
                 appModule,
-                storageModule
+                storageModule,
+                firebaseModule
             )
         }
     }

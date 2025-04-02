@@ -16,7 +16,10 @@ interface PlantDao {
     fun getAll(): Flow<List<PlantEntity>>
 
     @Query("SELECT * FROM PlantEntity WHERE id = :plantId")
-     fun getById(plantId: String): Flow<PlantEntity?>
+    fun getById(plantId: String): Flow<PlantEntity?>
+
+    @Query("SELECT * FROM PlantEntity WHERE nextWatering <= :currentDate")
+    suspend fun getPlantsToWater(currentDate: Long): List<PlantEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(plant: PlantEntity)

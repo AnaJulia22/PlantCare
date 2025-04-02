@@ -8,9 +8,14 @@ data class Plant(
     val species: String? = null,
     val wateringFrequency: String,
     val lastWatered: String? = null,
-    val nextWatering: String,
+    val nextWatering: Long,
     val isWatered: Boolean = false,
-    val imageRes: Int?
-) {
+    val imageRes: Int?,
+    val timeToWater: String? = null
+)
 
-}
+/*data class TimelapseImage(
+    val url: String,
+    val date: Long // timestamp
+)
+*/

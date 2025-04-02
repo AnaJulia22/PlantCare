@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 class PlantRepository (
     private val dao: PlantDao
 ) {
-    val tasks get() = dao.getAll()
+    val plants get() = dao.getAll()
 
     suspend fun save(plant: Plant) = withContext(IO) {
         dao.insert(plant.toPlantEntity())
@@ -27,7 +27,7 @@ class PlantRepository (
                 id = id,
                 name = "",
                 wateringFrequency = "",
-                nextWatering = "",
+                nextWatering = "".toLongOrNull() ?: 0L,
                 isWatered = false
             )
         )
@@ -37,6 +37,7 @@ class PlantRepository (
 
 }
 
+
 fun Plant.toPlantEntity() = PlantEntity(
     id = this.id,
     name = this.name,
@@ -45,7 +46,8 @@ fun Plant.toPlantEntity() = PlantEntity(
     lastWatered = this.lastWatered,
     nextWatering = this.nextWatering,
     isWatered = this.isWatered,
-    imageRes = this.imageRes
+    imageRes = this.imageRes,
+    timeToWater = this.timeToWater
 )
 
 fun PlantEntity.toPlant() = Plant(
@@ -56,5 +58,6 @@ fun PlantEntity.toPlant() = Plant(
     lastWatered = this.lastWatered,
     nextWatering = this.nextWatering,
     isWatered = this.isWatered,
-    imageRes = this.imageRes
+    imageRes = this.imageRes,
+    timeToWater = this.timeToWater
 )

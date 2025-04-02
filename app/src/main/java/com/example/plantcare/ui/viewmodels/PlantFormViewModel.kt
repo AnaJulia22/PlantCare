@@ -64,6 +64,11 @@ class PlantFormViewModel(
                         it.copy(imageRes = imageRes)
                     }
                 },
+                onTimeResChange = { time ->
+                    _uiState.update {
+                        it.copy(timeToWater = time)
+                    }
+                },
                 topAppBarName = "Adicionando uma planta"
             )
         }
@@ -85,6 +90,7 @@ class PlantFormViewModel(
                                 lastWatered = plant.lastWatered ?: "",
                                 nextWatering = plant.nextWatering,
                                 imageRes = plant.imageRes ?: 0,
+                                timeToWater = plant.timeToWater ?: "",
                                 isDeleteEnabled = true
                             )
                         }
@@ -104,7 +110,8 @@ class PlantFormViewModel(
                     isWatered = isWatered,
                     lastWatered = lastWatered,
                     nextWatering = nextWatering,
-                    imageRes = imageRes
+                    imageRes = imageRes,
+                    timeToWater = timeToWater
                 )
             )
         }

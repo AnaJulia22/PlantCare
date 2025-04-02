@@ -64,6 +64,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    implementation(libs.androidx.material)
+    implementation(libs.material.icons.extended.android)
+    implementation("com.google.code.gson:gson:2.10.1")
 
     // 🔹 Adicionando o Credential Manager
     implementation("androidx.credentials:credentials:1.2.0")
@@ -78,7 +81,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
 
-
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
 
     implementation("com.google.firebase:firebase-auth")
@@ -86,7 +88,7 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.0")
-    implementation("androidx.navigation:navigation-compose:2.5.3")
+    implementation(libs.androidx.navigation.compose)
     implementation("io.coil-kt:coil-compose:2.2.2")
 
     implementation (libs.androidx.work.runtime.ktx)

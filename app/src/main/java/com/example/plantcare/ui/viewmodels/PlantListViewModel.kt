@@ -18,7 +18,7 @@ class PlantListViewModel (
         MutableStateFlow(PlantListUiState())
     val uiState
         get() = _uiState
-            .combine(repository.tasks) { uiState, plants ->
+            .combine(repository.plants) { uiState, plants ->
                 uiState.copy(plants = plants.map { it.toPlant() })
             }
 
