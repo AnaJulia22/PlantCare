@@ -49,9 +49,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import com.example.plantcare.R
 import com.example.plantcare.models.Plant
-import com.example.plantcare.samples.generators.generateRandomPlants
 import com.example.plantcare.ui.states.PlantListUiState
 import com.example.plantcare.ui.theme.PlantCareTheme
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -151,10 +152,11 @@ fun PlantListScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         )
+                        val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
                         plant.nextWatering.let { nextWatering ->
-                            AnimatedVisibility(visible = expandedPlantId == plant.id && nextWatering.isNotBlank()) {
+                            AnimatedVisibility(visible = expandedPlantId == plant.id && nextWatering.toString().isNotBlank()) {
                                 Text(
-                                    text = nextWatering,
+                                    text =  LocalDate.ofEpochDay(nextWatering).format(dateFormatter),
                                     style = TextStyle.Default.copy(fontSize = 18.sp)
                                 )
                             }
@@ -202,28 +204,8 @@ fun PlantsListScreenPreview() {
     PlantCareTheme {
         PlantListScreen(
             uiState = PlantListUiState(
-                plants = generateRandomPlants(5)
+
             )
         )
     }
 }
-
-/*
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PlantCareTopBar() {
-    TopAppBar(
-        title = { Text("PlantCare", fontSize = 22.sp, fontWeight = FontWeight.Bold) },
-        actions = {
-            IconButton(onClick = { */
-/* TODO: ação de notificações *//*
- }) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "Notificações",
-                    tint = Color.Red
-                )
-            }
-        }
-    )
-}*/

@@ -12,7 +12,9 @@ data class PlantEntity (
     val species: String? = null,
     val wateringFrequency: String,
     val lastWatered: String? = null,
-    val nextWatering: String,
+    val nextWatering: Long,
     val isWatered: Boolean = false,
-    val imageRes: Int? = 0
-)
+    val imageRes: Int? = 0,
+    val timeToWater: String? = null
+) {
+}

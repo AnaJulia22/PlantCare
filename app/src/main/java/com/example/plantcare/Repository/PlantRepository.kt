@@ -27,7 +27,7 @@ class PlantRepository (
                 id = id,
                 name = "",
                 wateringFrequency = "",
-                nextWatering = "",
+                nextWatering = "".toLongOrNull() ?: 0L,
                 isWatered = false
             )
         )
@@ -46,7 +46,8 @@ fun Plant.toPlantEntity() = PlantEntity(
     lastWatered = this.lastWatered,
     nextWatering = this.nextWatering,
     isWatered = this.isWatered,
-    imageRes = this.imageRes
+    imageRes = this.imageRes,
+    timeToWater = this.timeToWater
 )
 
 fun PlantEntity.toPlant() = Plant(
@@ -57,5 +58,6 @@ fun PlantEntity.toPlant() = Plant(
     lastWatered = this.lastWatered,
     nextWatering = this.nextWatering,
     isWatered = this.isWatered,
-    imageRes = this.imageRes
+    imageRes = this.imageRes,
+    timeToWater = this.timeToWater
 )

@@ -1,9 +1,6 @@
 package com.example.plantcare.ui.screens
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
-import android.os.Build
+import android.app.TimePickerDialog
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -22,9 +19,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.plantcare.Application.WorkScheduler
+import com.example.plantcare.Repository.PlantRepository
+import com.example.plantcare.database.PlantDataBase
 import com.example.plantcare.ui.states.PlantFormUiState
 import com.example.plantcare.ui.theme.PlantCareTheme
+import kotlinx.coroutines.flow.firstOrNull
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 
@@ -38,25 +42,32 @@ fun PlantFormScreen(
 ) {
     val context = LocalContext.current
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-    var nextWatering by remember { mutableStateOf("") }
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    var nextWatering by remember { mutableStateOf(0L) }
 
-    LaunchedEffect(uiState.wateringFrequency) {
+    LaunchedEffect(uiState.wateringFrequency, selectedDate) {
         if (uiState.wateringFrequency.isNotEmpty()) {
             val frequency = uiState.wateringFrequency.toIntOrNull() ?: 0
+            println("Selected Date: $selectedDate")
             nextWatering = if (frequency > 0) {
-                LocalDate.now().plusDays(frequency.toLong()).format(dateFormatter)
+                selectedDate.plusDays(frequency.toLong()).toEpochDay()
             } else {
-                ""
+                0L
             }
             uiState.onNextWateringChange(nextWatering)
         }
     }
 
-    // Verifica se é o dia de regar e ainda não foi regado
-    if (nextWatering == LocalDate.now().format(dateFormatter) && !uiState.isWatered) {
+
+    /*if (nextWatering == LocalDate.now().format(dateFormatter) && !uiState.isWatered) {
         sendWateringNotification(context, uiState.name)
-    }
+    }*/
+
 
     Column(
         modifier = modifier
@@ -125,18 +136,71 @@ fun PlantFormScreen(
             )
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = "Next Watering: $nextWatering",
+                text = "Last Watering Date: $selectedDate",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.clickable { showDatePicker = true }
+            )
+            uiState.onLastWateredChange(selectedDate.toString())
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = "Next Watering Date: ${LocalDate.ofEpochDay(nextWatering).format(dateFormatter)}",
                 fontSize = 16.sp,
                 color = Color.Gray
             )
+            uiState.onNextWateringChange(nextWatering)
+            Spacer(modifier = Modifier.size(8.dp))
+            Text(
+                text = "Watering Time: ${selectedTime.format(timeFormatter)}",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.clickable { showTimePicker = true }
+            )
+            uiState.onTimeResChange(selectedTime.toString())
         }
+
+        if (showDatePicker) {
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    TextButton(onClick = { showDatePicker = false }) { Text("OK") }
+                }
+            ) {
+                val datePickerState = rememberDatePickerState()
+                DatePicker(state = datePickerState)
+                LaunchedEffect(datePickerState.selectedDateMillis) {
+                    datePickerState.selectedDateMillis?.let {
+                        selectedDate = Instant.ofEpochMilli(it)
+                            .atZone(ZoneId.systemDefault())
+                            .toLocalDate()
+                        println("New Selected Date: $selectedDate")
+                    }
+                }
+            }
+        }
+
+        if (showTimePicker) {
+            TimePickerDialog(
+                context,
+                { _, hour, minute -> selectedTime = LocalTime.of(hour, minute) },
+                selectedTime.hour,
+                selectedTime.minute,
+                true
+            ).show()
+        }
+
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomEnd
         ) {
             SaveButton(onSaveClick)
+            WorkScheduler.scheduleWateringReminder(context, selectedTime, uiState.name)
+            println(uiState.name)
+            println(LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter))
+            println(uiState.timeToWater)
         }
+
     }
 }
 
@@ -182,30 +246,6 @@ fun InputField(
         },
         textStyle = textStyle
     )
-}
-
-fun sendWateringNotification(context: Context, plantName: String) {
-    val notificationManager =
-        context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-    val channelId = "plant_watering_reminder"
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val channel = NotificationChannel(
-            channelId,
-            "Watering Reminders",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        notificationManager.createNotificationChannel(channel)
-    }
-
-    val notification = androidx.core.app.NotificationCompat.Builder(context, channelId)
-        .setSmallIcon(android.R.drawable.ic_popup_reminder)
-        .setContentTitle("Time to water your plant!")
-        .setContentText("Don't forget to water $plantName today.")
-        .setPriority(androidx.core.app.NotificationCompat.PRIORITY_DEFAULT)
-        .build()
-
-    notificationManager.notify(1, notification)
 }
 
 @Preview(showBackground = true)

@@ -29,29 +29,7 @@ fun scheduleWateringReminderWorker(
     WorkManager.getInstance(context).enqueue(workRequest)
 }*/
 
-fun scheduleWateringReminder(plant: Plant, context: Context) {
-    val data = workDataOf(
-        "plantId" to plant.id,
-        "plantName" to plant.name
-    )
 
-    // Calcular a próxima data de rega
-    val nextWateringDate = calculateNextWateringDate(plant)
-    val delayInMillis = nextWateringDate - System.currentTimeMillis()
-
-    val reminderRequest = OneTimeWorkRequestBuilder<WateringReminderWorker>()
-        .setInputData(data)
-        .setInitialDelay(delayInMillis, TimeUnit.MILLISECONDS)
-        .build()
-
-    WorkManager.getInstance(context).enqueue(reminderRequest)
-}
-
-private fun calculateNextWateringDate(plant: Plant): Long {
-    val lastWatered = plant.lastWatered?.toLongOrNull() ?: System.currentTimeMillis()
-    val frequencyInMillis = plant.wateringFrequency.toLongOrNull()?.times(24L * 60L * 60L * 1000L) ?: 0L
-    return lastWatered + frequencyInMillis
-}
 
 class WateringReminderWorker(
     context: Context,
