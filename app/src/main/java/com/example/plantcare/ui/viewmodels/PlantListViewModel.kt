@@ -2,6 +2,7 @@ package com.example.plantcare.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.plantcare.Authentication.FirebaseAuthRepository
 import com.example.plantcare.Repository.PlantRepository
 import com.example.plantcare.Repository.toPlant
 import com.example.plantcare.ui.states.PlantListUiState
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class PlantListViewModel (
-    private val repository: PlantRepository
+    private val repository: PlantRepository,
+    private val firebaseAuthRepository: FirebaseAuthRepository
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<PlantListUiState> =
@@ -33,4 +35,9 @@ class PlantListViewModel (
             }
         }
     }
+
+    fun signOut() {
+        firebaseAuthRepository.signOut()
+    }
+
 }

@@ -43,9 +43,29 @@ fun PlantFormScreen(
     val context = LocalContext.current
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    var selectedDate by remember {
+        mutableStateOf(
+            uiState.lastWatered?.takeIf { it.isNotEmpty() }?.let {
+                try {
+                    LocalDate.parse(it)
+                } catch (e: Exception) {
+                    LocalDate.now()
+                }
+            } ?: LocalDate.now()
+        )
+    }
 
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
-    var selectedTime by remember { mutableStateOf(LocalTime.now()) }
+    var selectedTime by remember {
+        mutableStateOf(
+            uiState.timeToWater?.takeIf { it.isNotEmpty() }?.let {
+                try {
+                    LocalTime.parse(it)
+                } catch (e: Exception) {
+                    LocalTime.now()
+                }
+            } ?: LocalTime.now()
+        )
+    }
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var nextWatering by remember { mutableStateOf(0L) }
@@ -62,7 +82,6 @@ fun PlantFormScreen(
             uiState.onNextWateringChange(nextWatering)
         }
     }
-
 
     /*if (nextWatering == LocalDate.now().format(dateFormatter) && !uiState.isWatered) {
         sendWateringNotification(context, uiState.name)
@@ -135,35 +154,36 @@ fun PlantFormScreen(
                 textStyle = TextStyle.Default.copy(fontSize = 18.sp)
             )
             Spacer(modifier = Modifier.size(8.dp))
+            val lastWateredDate = uiState.lastWatered
             Text(
-                text = "Last Watering Date: $selectedDate",
+                text = "Last Watering Date: $lastWateredDate",
                 fontSize = 16.sp,
                 color = Color.Gray,
-                modifier = Modifier.clickable { showDatePicker = true }
+                modifier = Modifier.clickable { showDatePicker = true; uiState.onLastWateredChange(selectedDate.toString()) }
             )
-            uiState.onLastWateredChange(selectedDate.toString())
             Spacer(modifier = Modifier.size(8.dp))
             Text(
-                text = "Next Watering Date: ${LocalDate.ofEpochDay(nextWatering).format(dateFormatter)}",
+                text = "Next Watering Date: ${uiState.nextWatering}",
                 fontSize = 16.sp,
                 color = Color.Gray
             )
-            uiState.onNextWateringChange(nextWatering)
             Spacer(modifier = Modifier.size(8.dp))
+            val time = uiState.timeToWater
             Text(
-                text = "Watering Time: ${selectedTime.format(timeFormatter)}",
+                text = "Watering Time: $time",
                 fontSize = 16.sp,
                 color = Color.Gray,
-                modifier = Modifier.clickable { showTimePicker = true }
+                modifier = Modifier.clickable { showTimePicker = true; uiState.onTimeResChange(selectedTime.toString()) }
             )
-            uiState.onTimeResChange(selectedTime.toString())
         }
 
         if (showDatePicker) {
             DatePickerDialog(
                 onDismissRequest = { showDatePicker = false },
                 confirmButton = {
-                    TextButton(onClick = { showDatePicker = false }) { Text("OK") }
+                    TextButton(onClick = {
+                        showDatePicker = false
+                        uiState.onLastWateredChange(selectedDate.toString())}) { Text("OK") }
                 }
             ) {
                 val datePickerState = rememberDatePickerState()
@@ -171,7 +191,7 @@ fun PlantFormScreen(
                 LaunchedEffect(datePickerState.selectedDateMillis) {
                     datePickerState.selectedDateMillis?.let {
                         selectedDate = Instant.ofEpochMilli(it)
-                            .atZone(ZoneId.systemDefault())
+                            .atZone(ZoneId.of("UTC"))
                             .toLocalDate()
                         println("New Selected Date: $selectedDate")
                     }
@@ -182,7 +202,9 @@ fun PlantFormScreen(
         if (showTimePicker) {
             TimePickerDialog(
                 context,
-                { _, hour, minute -> selectedTime = LocalTime.of(hour, minute) },
+                { _, hour, minute ->
+                    selectedTime = LocalTime.of(hour, minute)
+                    uiState.onTimeResChange(selectedTime.toString())},
                 selectedTime.hour,
                 selectedTime.minute,
                 true
@@ -195,7 +217,7 @@ fun PlantFormScreen(
             contentAlignment = Alignment.BottomEnd
         ) {
             SaveButton(onSaveClick)
-            WorkScheduler.scheduleWateringReminder(context, selectedTime, uiState.name)
+            WorkScheduler.scheduleWateringReminder(context, selectedTime, selectedDate, uiState.name)
             println(uiState.name)
             println(LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter))
             println(uiState.timeToWater)
@@ -229,6 +251,9 @@ fun InputField(
     textStyle: TextStyle,
     modifier: Modifier = Modifier
 ) {
+    LaunchedEffect(value, placeholder) {
+        println("InputField - Current value: '$value', Placeholder: '$placeholder'")
+    }
     BasicTextField(
         value = value,
         onValueChange = onValueChange,

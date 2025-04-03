@@ -12,12 +12,12 @@ import java.util.concurrent.TimeUnit
 class WorkScheduler {
 
     companion object {
-        fun scheduleWateringReminder(context: Context, selectedTime: LocalTime, plantName: String) {
+        fun scheduleWateringReminder(context: Context, selectedTime: LocalTime, selectedDate: LocalDate, plantName: String) {
             val workManager = WorkManager.getInstance(context)
 
             // Calculando o tempo até o próximo horário de rega
 
-            val targetTime = LocalDate.now().atTime(selectedTime)
+            val targetTime = selectedDate.atTime(selectedTime)
             val currentTime = LocalDate.now().atTime(LocalTime.now())
 
             // Se o horário selecionado já passou, agenda para o próximo dia
