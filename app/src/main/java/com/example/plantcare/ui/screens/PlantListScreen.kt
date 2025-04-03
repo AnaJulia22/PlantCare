@@ -61,7 +61,7 @@ fun PlantListScreen(
     uiState: PlantListUiState,
     modifier: Modifier = Modifier,
     onNewPlantClick: () -> Unit = {},
-    onPlantClick: (Plant) -> Unit = {},
+    onPlantClick: (Plant) -> Unit = {}
 ) {
     var expandedPlantId by remember { mutableStateOf<String?>(null) }
     Box(

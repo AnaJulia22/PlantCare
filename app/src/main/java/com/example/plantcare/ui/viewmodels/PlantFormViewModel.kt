@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 
 class PlantFormViewModel(
@@ -88,7 +90,7 @@ class PlantFormViewModel(
                                 wateringFrequency = plant.wateringFrequency,
                                 isWatered = plant.isWatered,
                                 lastWatered = plant.lastWatered ?: "",
-                                nextWatering = plant.nextWatering,
+                                nextWatering = plant.nextWatering ?: 0L,
                                 imageRes = plant.imageRes ?: 0,
                                 timeToWater = plant.timeToWater ?: "",
                                 isDeleteEnabled = true
@@ -98,24 +100,45 @@ class PlantFormViewModel(
             }
         }
     }
-
+    private fun calculateNextWatering(lastWatered: LocalDate, frequency: Int): Long {
+        return if (frequency > 0) lastWatered.plusDays(frequency.toLong()).toEpochDay()
+        else LocalDate.now().toEpochDay()
+    }
     suspend fun save() {
+        println("Before save - timeToWater: ${_uiState.value.timeToWater}")
+        println("Before save - nextWatering: ${_uiState.value.nextWatering}")
+        println("Before save - lastWatered: ${_uiState.value.lastWatered}")
         with(_uiState.value) {
-            repository.save(
-                Plant(
-                    id = id ?: UUID.randomUUID().toString(),
-                    name = name,
-                    species = species,
-                    wateringFrequency = wateringFrequency,
-                    isWatered = isWatered,
-                    lastWatered = lastWatered,
-                    nextWatering = nextWatering,
-                    imageRes = imageRes,
-                    timeToWater = timeToWater
-                )
+            val plantToSave = Plant(
+                id = id ?: UUID.randomUUID().toString(),
+                name = name,
+                species = species,
+                wateringFrequency = wateringFrequency,
+                isWatered = isWatered,
+                lastWatered = lastWatered,
+                nextWatering = nextWatering,
+                imageRes = imageRes,
+                timeToWater = timeToWater
             )
-        }
 
+            repository.save(plantToSave)
+
+            // Log dos dados após o salvamento
+            println("""
+            Plant saved successfully:
+            ID: ${plantToSave.id}
+            Name: ${plantToSave.name}
+            Species: ${plantToSave.species}
+            Watering Frequency: ${plantToSave.wateringFrequency}
+            Is Watered: ${plantToSave.isWatered}
+            Last Watered: ${plantToSave.lastWatered}
+            Next Watering: ${plantToSave.nextWatering}
+            Time to Water: ${plantToSave.timeToWater}
+            Image Resource: ${plantToSave.imageRes}
+        """.trimIndent())
+
+
+        }
     }
 
     suspend fun delete() {

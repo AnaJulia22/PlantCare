@@ -15,7 +15,8 @@ const val plantListRoute = "plantList"
 
 fun NavGraphBuilder.plantListScreen(
     onNavigateToNewPlantForm: () -> Unit,
-    onNavigateToEditPlantForm: (Plant) -> Unit
+    onNavigateToEditPlantForm: (Plant) -> Unit,
+    onNavigateToLogin: () -> Unit
 ) {
     composable(plantListRoute) {
         val viewModel = koinViewModel<PlantListViewModel>()

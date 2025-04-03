@@ -28,7 +28,8 @@ fun NavGraphBuilder.homeGraph(
 
         plantListScreen(
             onNavigateToNewPlantForm = onNavigateToNewPlantForm,
-            onNavigateToEditPlantForm = onNavigateToEditPlantForm
+            onNavigateToEditPlantForm = onNavigateToEditPlantForm,
+            onNavigateToLogin = onNavigateToLogin
         )
         plantFormScreen(onPopBackStack = onPopBackStack)
     }
