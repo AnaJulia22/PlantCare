@@ -13,11 +13,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class PlantIdentifierViewModel : ViewModel() {
+class PlantIdentifierViewModel(
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PlantIdentifierUiState())
     val uiState: StateFlow<PlantIdentifierUiState> = _uiState
-
+    private var lastValidState: PlantIdentifierUiState? = null
     fun identify(uri: Uri, context: Context) {
         val imageBase64 = imageToBase64(uri, context)
         val request = PlantRequest(images = listOf(imageBase64))
@@ -34,40 +35,58 @@ class PlantIdentifierViewModel : ViewModel() {
                     "best_watering",
                     "toxicity"
                 ).joinToString(",")
-                val response = getRetrofit().identifyPlant("0uhjV9XFtRyiHaQWtXfKJGoSWiB7vy2uM12a8yPtiI4qGdFFlE", request, details)
+                val response = getRetrofit().identifyPlant(
+                    "0uhjV9XFtRyiHaQWtXfKJGoSWiB7vy2uM12a8yPtiI4qGdFFlE",
+                    request,
+                    details
+                )
                 if (response.isSuccessful) {
                     val suggestion = response.body()
                         ?.result
                         ?.classification
                         ?.suggestions
                         ?.firstOrNull()
-                    _uiState.update {
-                        it.copy(
-                            plantName = suggestion?.name ?: "Não encontrada",
-                            plantImage = suggestion?.details?.image?.value ?: "",
-                            commonNames = suggestion?.details?.common_names ?: emptyList(),
-                            description = suggestion?.details?.description_all?.value ?: "",
-                            toxicity = suggestion?.details?.toxicity ?: "",
-                            plantUrl = suggestion?.details?.url ?: "",
-                            probability = suggestion?.probability ?: 0.0,
-                            bestWatering = suggestion?.details?.best_watering ?: "",
-                            isLoading = false,
-                            errorMessage = null
-                        )
-                    }
+                    val newState = PlantIdentifierUiState(
+                        plantName = suggestion?.name ?: "Não encontrada",
+                        plantImage = suggestion?.details?.image?.value ?: "",
+                        commonNames = suggestion?.details?.common_names ?: emptyList(),
+                        description = suggestion?.details?.description_all?.value ?: "",
+                        toxicity = suggestion?.details?.toxicity ?: "",
+                        plantUrl = suggestion?.details?.url ?: "",
+                        probability = suggestion?.probability ?: 0.0,
+                        bestWatering = suggestion?.details?.best_watering ?: "",
+                        isLoading = false,
+                        errorMessage = null
+                    )
+                    _uiState.update { newState }
+                    lastValidState = newState
                 } else {
                     val errorBody = response.errorBody()?.string()
                     _uiState.update {
-                        it.copy(plantName = "Erro ${response.code()}: $errorBody", isLoading = false)
+                        it.copy(
+                            plantName = "Erro ${response.code()}: $errorBody",
+                            isLoading = false
+                        )
                     }
                 }
             } catch (e: Exception) {
                 Log.e("PlantIdentifier", "Erro inesperado", e)
                 println(e.localizedMessage)
-                _uiState.update { it.copy(plantName = "Erro: ${e.localizedMessage}", isLoading = false) }
+                _uiState.update {
+                    it.copy(
+                        plantName = "Erro: ${e.localizedMessage}",
+                        isLoading = false
+                    )
+                }
 
             }
 
+        }
+    }
+
+    fun restoreLastState() {
+        lastValidState?.let { state ->
+            _uiState.update { state }
         }
     }
 

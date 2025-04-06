@@ -7,6 +7,7 @@ import com.example.plantcare.ui.viewmodels.SignUpViewModel
 import com.example.plantcare.ui.viewmodels.SignInViewModel
 import com.example.plantcare.ui.viewmodels.PlantCareViewModel
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
+import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import com.example.plantcare.Repository.PlantRepository
 import com.example.plantcare.Repository.UserRepository
 import com.example.plantcare.Authentication.FirebaseAuthRepository
@@ -25,6 +26,7 @@ val appModule = module {
     viewModelOf(::SignInViewModel)
     viewModelOf(::PlantCareViewModel)
     viewModelOf(::PlantIdentifierViewModel)
+    viewModelOf(::PlantResultViewModel)
 }
 
 val storageModule = module {

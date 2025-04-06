@@ -1,6 +1,7 @@
 package com.example.plantcare.ui.screens
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,13 +31,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.plantcare.ui.states.PlantIdentifierUiState
+import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PlantIdentifierScreen(
-    uiState: PlantIdentifierUiState,
+    viewModel: PlantIdentifierViewModel = koinViewModel(),
     onImageSelected: (Uri, context: android.content.Context) -> Unit,
-    onOpenCamera: () -> Unit
+    onOpenCamera: () -> Unit,
+    onNavigateToResult: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
 
@@ -41,6 +49,15 @@ fun PlantIdentifierScreen(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
         uri?.let { onImageSelected(it, context) }
+
+    }
+
+    LaunchedEffect(uiState.plantName) {
+        Log.d("NAVIGATION", "Estado atual: ${uiState?.plantName}, isLoading: ${uiState?.isLoading}")
+        if (uiState?.plantName?.isNotBlank() == true && !uiState.isLoading) {
+            Log.d("NAVIGATION", "Navegando para resultados")
+            onNavigateToResult()
+        }
     }
 
     Column(
@@ -69,67 +86,6 @@ fun PlantIdentifierScreen(
             CircularProgressIndicator()
         } else if (uiState.errorMessage != null) {
             Text("Erro: ${uiState.errorMessage}")
-        } else {
-            if (uiState.plantImage.isNotBlank()) {
-                AsyncImage(
-                    model = uiState.plantImage,
-                    contentDescription = "Imagem semelhante",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                )
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "🌿 Planta identificada: ${uiState.plantName}",
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            val uriHandler = LocalUriHandler.current
-
-            if (uiState.plantUrl.isNotBlank()) {
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Button(onClick = { uriHandler.openUri(uiState.plantUrl) }) {
-                    Text("🌐 Ver mais sobre a planta")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = "📊 Probabilidade de ser uma planta: ${uiState.probability}%")
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = "📜 Descrição:")
-            Text(text = uiState.description.ifBlank { "Sem descrição disponível." })
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (uiState.commonNames.isNotEmpty()) {
-                Text(text = "📚 Nomes populares:")
-                uiState.commonNames.forEach { name ->
-                    Text(text = "• $name")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (uiState.bestWatering.isNotBlank()) {
-                Text(text = "💦 Melhor momento para regar:")
-                Text(text = uiState.bestWatering)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            if (uiState.toxicity.isNotBlank()) {
-                Text(text = "☠️ Toxicidade:")
-                Text(text = uiState.toxicity)
-            }
         }
     }
 }
@@ -138,7 +94,7 @@ fun PlantIdentifierScreen(
 @Composable
 fun PlantIdentifierScreenPreview() {
     PlantIdentifierScreen(
-        uiState = PlantIdentifierUiState(
+        /*uiState = PlantIdentifierUiState(
             isLoading = false,
             plantName = "Roseira",
             plantImage = "",
@@ -148,8 +104,9 @@ fun PlantIdentifierScreenPreview() {
             bestWatering = "Pela manhã ou no final da tarde",
             probability = 90.0,
             toxicity = "Tóxica para animais domésticos"
-        ),
+        ),*/
         onImageSelected = { _, _ -> },
-        onOpenCamera = { /* Preview: ação simulada */ }
+        onOpenCamera = { /* Preview: ação simulada */ },
+        onNavigateToResult = { /* Preview: ação simulada */ }
     )
 }
