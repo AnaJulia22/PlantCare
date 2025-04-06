@@ -68,6 +68,18 @@ dependencies {
     implementation(libs.material.icons.extended.android)
     implementation("com.google.code.gson:gson:2.10.1")
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
+    implementation("androidx.activity:activity-ktx:1.6.1")
+
+    implementation("androidx.camera:camera-camera2:1.2.3")
+    implementation("androidx.camera:camera-lifecycle:1.2.3")
+    implementation("androidx.camera:camera-view:1.2.3")
+    implementation("androidx.camera:camera-core:1.2.3")
+    implementation("com.google.guava:guava:31.1-android")
+
+
     // 🔹 Adicionando o Credential Manager
     implementation("androidx.credentials:credentials:1.2.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.2.0")

@@ -13,8 +13,11 @@ fun NavGraphBuilder.homeGraph(
     onNavigateToNewPlantForm: () -> Unit,
     onNavigateToEditPlantForm: (Plant) -> Unit,
     onPopBackStack: () -> Unit,
-    navController: NavController,
-    onNavigateToLogin: () -> Unit
+    navController: NavHostController,
+    onNavigateToLogin: () -> Unit,
+    onNavigateToCamera: () -> Unit,
+    onNavigateToResult: () -> Unit,
+    onNavigateToPlantDetails : () -> Unit
 ) {
     navigation(
         //startDestination = plantListRoute,
@@ -32,6 +35,24 @@ fun NavGraphBuilder.homeGraph(
             onNavigateToLogin = onNavigateToLogin
         )
         plantFormScreen(onPopBackStack = onPopBackStack)
+
+        plantIdentifierScreen(
+            onNavigateToCamera = onNavigateToCamera,
+            onNavigateToResult = onNavigateToResult
+        )
+
+        cameraScreen(
+            onNavigateToResult = onNavigateToResult
+        )
+
+        plantResultScreen(
+            onNavigateToPlantDetails = onNavigateToPlantDetails,
+            navController = navController
+        )
+
+        plantResultDetailsScreen(
+            navController = navController
+        )
     }
 }
 

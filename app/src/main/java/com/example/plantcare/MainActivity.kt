@@ -10,9 +10,13 @@ import com.example.plantcare.database.PlantDataBase
 import com.example.plantcare.ui.Navigation.authGraph
 import com.example.plantcare.ui.Navigation.authGraphRoute
 import com.example.plantcare.ui.Navigation.homeGraph
+import com.example.plantcare.ui.Navigation.navigateToCamera
 import com.example.plantcare.ui.Navigation.navigateToEditPlantForm
 import com.example.plantcare.ui.Navigation.navigateToHomeGraph
 import com.example.plantcare.ui.Navigation.navigateToNewPlantForm
+import com.example.plantcare.ui.Navigation.navigateToPlantIdentifier
+import com.example.plantcare.ui.Navigation.navigateToPlantResult
+import com.example.plantcare.ui.Navigation.navigateToPlantResultDetails
 import com.example.plantcare.ui.Navigation.navigateToSignIn
 import com.example.plantcare.ui.Navigation.navigateToSignUp
 import com.example.plantcare.ui.theme.PlantCareTheme
@@ -75,6 +79,15 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         onNavigateToLogin = {
                             navController.navigateToSignIn()
+                        },
+                        onNavigateToCamera = {
+                            navController.navigateToCamera()
+                        },
+                        onNavigateToResult = {
+                            navController.navigateToPlantResult()
+                        },
+                        onNavigateToPlantDetails = {
+                            navController.navigateToPlantResultDetails()
                         }
                     )
                 }
