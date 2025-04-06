@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -46,7 +47,7 @@ fun PlantCareScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Flora Friend") },
+                title = { Text("PlantCare") },
                 actions = {
                     IconButton(onClick = onExitToAppClick) {
                         Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair do app")
@@ -60,7 +61,7 @@ fun PlantCareScreen(
                     Icons.Default.Home to "Home" to "home",
                     Icons.Default.Notifications to "Lembretes" to "notifications",
                     Icons.Default.PlayArrow to "Time-lapse" to "timelapse",
-                    Icons.Default.Settings to "Config" to "settings"
+                    Icons.Default.CameraEnhance to "Identificação" to "plant_identifier"
                 ).forEach { (iconLabelPair, route) ->
                     val (icon, label) = iconLabelPair
                     NavigationBarItem(
@@ -105,7 +106,7 @@ val homeMenuItems = listOf(
     Triple(Icons.Default.Notifications, "Notificações", "notifications"),
     Triple(Icons.Default.PlayArrow, "Time-lapse", "timelapse"),
     Triple(Icons.Default.Info, "Diário", "plant_diary"),
-    Triple(Icons.Default.Settings, "Configurações", "settings")
+    Triple(Icons.Default.CameraEnhance, "Identificação", "plant_identifier")
 )
 
 @Composable
