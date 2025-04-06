@@ -71,43 +71,36 @@ fun PlantIdentificationResultScreen(
         ) {
 
             Text(
-                text = "species identification",
-                style = MaterialTheme.typography.titleMedium,
+                text = "Species Identification",
+                style = MaterialTheme.typography.titleLarge,
                 color = Color(0xFF007F4E), // Verde suave
                 modifier = Modifier
                     .padding(bottom = 16.dp)
             )
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                state.plantImage.take(2).forEach { url ->
-                    AsyncImage(
-                        model = url,
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(100.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp))
-                            .padding(end = 8.dp),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+            AsyncImage(
+                model = state.plantImage,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(200.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(2.dp, Color.LightGray, RoundedCornerShape(12.dp)),
+                contentScale = ContentScale.Crop
+            )
 
-                Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-                Column {
-                    Text(
-                        text = "${"%.1f".format(state.probability * 100)}%".uppercase(),
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = Color(0xFF007F4E)
-                    )
-                    Text(
-                        text = "confirm",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
-                    )
-                }
+            Column {
+                Text(
+                    text = "${"%.1f".format(state.probability * 100)}%".uppercase(),
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = Color(0xFF007F4E)
+                )
+                Text(
+                    text = "confirm",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.Gray
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -130,7 +123,10 @@ fun PlantIdentificationResultScreen(
 
                 TextButton(onClick = {
                     val query = Uri.encode(state.plantName)
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=$query"))
+                    val intent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse("https://www.google.com/search?q=$query")
+                    )
                     context.startActivity(intent)
                 }) {
                     Icon(
@@ -139,18 +135,12 @@ fun PlantIdentificationResultScreen(
                         tint = Color(0xFF007F4E)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Google", color = Color(0xFF007F4E))
-                }
-
-                /*TextButton(onClick = onGoogleClick) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = Color(0xFF007F4E)
+                    Text(
+                        "Google",
+                        color = Color(0xFF007F4E),
+                        style = MaterialTheme.typography.titleLarge
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("Google", color = Color(0xFF007F4E))
-                }*/
+                }
 
                 TextButton(onClick = onDetailsClick) {
                     Icon(
@@ -159,28 +149,23 @@ fun PlantIdentificationResultScreen(
                         tint = Color(0xFF007F4E)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("Details", color = Color(0xFF007F4E))
+                    Text(
+                        "Details",
+                        color = Color(0xFF007F4E),
+                        style = MaterialTheme.typography.titleLarge
+                    )
                 }
             }
         }
-    } ?: run {
-        // Se não tiver nada no estado
-        Text("Nenhuma planta identificada.")
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewPlantIdentificationResultScreen() {
-    val mockPlantName = "Adenium obesum"
-    val mockCommonNames = listOf("desert-rose", "Mock Azalea", "impala lily")
-    val mockProbability = 0.99
-    val mockImageUrls = listOf(
-        "https://plant-id.ams3.cdn.digitaloceanspaces.com/knowledge_base/wikidata/d60/d603f30aac9292c673126a720eb7a48e01a9210e.jpg",
-        "https://plant-id.ams3.cdn.digitaloceanspaces.com/knowledge_base/wikidata/2b5/2b57a1161e841fbff8e9f91a58f99c5bb4a116a6.jpg"
-    )
 
     PlantIdentificationResultScreen(
+        viewModel = PlantIdentifierViewModel(),
         onDetailsClick = { /* Preview: no-op */ }
     )
 }

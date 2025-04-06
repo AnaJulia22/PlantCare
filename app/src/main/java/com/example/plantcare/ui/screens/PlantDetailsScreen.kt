@@ -28,14 +28,15 @@ import com.example.plantcare.data.remote.dto.Description
 import com.example.plantcare.data.remote.dto.Details
 import com.example.plantcare.data.remote.dto.Image
 import com.example.plantcare.ui.states.PlantIdentifierUiState
+import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
 import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PlantDetailsScreen(
-    viewModel: PlantResultViewModel = koinViewModel()
+    viewModel: PlantIdentifierViewModel = koinViewModel()
 ) {
-    val details = viewModel.plantResult.collectAsState().value
+    val details = viewModel.uiState.collectAsState().value
 
     PlantDetailsContent(details = details)
 }

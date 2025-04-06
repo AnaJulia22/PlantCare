@@ -50,7 +50,9 @@ fun NavGraphBuilder.homeGraph(
             navController = navController
         )
 
-        plantResultDetailsScreen()
+        plantResultDetailsScreen(
+            navController = navController
+        )
     }
 }
 
