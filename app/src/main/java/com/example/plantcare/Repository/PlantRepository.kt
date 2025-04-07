@@ -16,8 +16,15 @@ class PlantRepository (
     }
 
     suspend fun toggleIsWatered(plant: Plant) = withContext(IO) {
-        val entity = plant.copy(isWatered = !plant.isWatered)
-            .toPlantEntity()
+        val today = java.time.LocalDate.now()
+        val frequency = plant.wateringFrequency.toLongOrNull() ?: 0L
+        val newNextWatering = today.plusDays(frequency).toEpochDay()
+        val entity = plant.copy(
+            isWatered = !plant.isWatered,
+            nextWatering = newNextWatering,
+            lastWatered = today.toString(),
+        ).toPlantEntity()
+
         dao.insert(entity)
     }
 

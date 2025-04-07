@@ -1,6 +1,7 @@
 package com.example.plantcare.ui.screens
 
 import android.app.TimePickerDialog
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -15,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -83,17 +86,12 @@ fun PlantFormScreen(
         }
     }
 
-    /*if (nextWatering == LocalDate.now().format(dateFormatter) && !uiState.isWatered) {
-        sendWateringNotification(context, uiState.name)
-    }*/
-
-
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
             .statusBarsPadding()
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .background(Color(0x339DC384)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
@@ -103,78 +101,85 @@ fun PlantFormScreen(
                 title = {
                     Text(
                         text = topAppBarName,
-                        fontSize = 20.sp,
-                    )
+                        fontSize = 22.sp,
+                        fontWeight = FontWeight.Bold)
                 },
                 actions = {
                     if (deleteEnabled) {
-                        Icon(
-                            Icons.Filled.Delete,
-                            contentDescription = "Delete plant icon",
-                            Modifier
-                                .clip(CircleShape)
-                                .clickable {
-                                    onDeleteClick()
-                                }
-                                .padding(4.dp)
-                        )
+                        IconButton(onClick = onDeleteClick) {
+                            Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Red)
+                        }
                     }
-                    Icon(
-                        Icons.Filled.Done,
-                        contentDescription = "Save plant icon",
-                        Modifier
-                            .clip(CircleShape)
-                            .clickable {
-                                onSaveClick()
-                            }
-                            .padding(4.dp)
-                    )
+
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF03A9F4))
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF9DC384))
             )
             Spacer(modifier = Modifier.size(8.dp))
-            InputField(
+            StyledInputField(
                 value = uiState.name,
                 onValueChange = uiState.onNameChange,
-                placeholder = "Name",
-                textStyle = TextStyle.Default.copy(fontSize = 24.sp)
+                label = "Name"
             )
-            Spacer(modifier = Modifier.size(8.dp))
-            InputField(
+            StyledInputField(
                 value = uiState.species ?: "",
                 onValueChange = uiState.onSpeciesChange,
-                placeholder = "Species",
-                textStyle = TextStyle.Default.copy(fontSize = 18.sp)
+                label = "Species"
             )
-            Spacer(modifier = Modifier.size(8.dp))
-            InputField(
+            StyledInputField(
                 value = uiState.wateringFrequency,
                 onValueChange = uiState.onWateringFrequencyChange,
-                placeholder = "Watering frequency (days)",
-                textStyle = TextStyle.Default.copy(fontSize = 18.sp)
+                label = "Watering frequency (days)"
             )
             Spacer(modifier = Modifier.size(8.dp))
-            val lastWateredDate = uiState.lastWatered
-            Text(
-                text = "Last Watering Date: $lastWateredDate",
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.clickable { showDatePicker = true; uiState.onLastWateredChange(selectedDate.toString()) }
-            )
-            Spacer(modifier = Modifier.size(8.dp))
-            Text(
-                text = "Next Watering Date: ${uiState.nextWatering}",
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.size(8.dp))
+
             val time = uiState.timeToWater
-            Text(
-                text = "Watering Time: $time",
-                fontSize = 16.sp,
-                color = Color.Gray,
-                modifier = Modifier.clickable { showTimePicker = true; uiState.onTimeResChange(selectedTime.toString()) }
-            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0x809DC384 ))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    val lastWateredDate = uiState.lastWatered
+                    println("Last Watered Date: $lastWateredDate")
+                    Text(
+                        text = "Last Watering Date: ${
+                            uiState.lastWatered?.takeIf { it.isNotBlank() }?.let {
+                                try {
+                                    LocalDate.parse(it).format(dateFormatter)
+                                } catch (e: Exception) {
+                                    "Invalid date" // Mensagem de fallback
+                                }
+                            } ?: "Not set" // Mensagem para valor vazio/nulo
+                        }",
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        modifier = Modifier
+                            .clickable {
+                                showDatePicker = true
+                                uiState.onLastWateredChange(selectedDate.toString())
+                            }
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    val nextWateringFormatted = LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter)
+                    Text(
+                        text = "Next Watering Date: $nextWateringFormatted",
+                        fontSize = 16.sp,
+                        color = Color.Black
+                    )
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(
+                        text = "Watering Time: $time",
+                        fontSize = 16.sp,
+                        color = Color.Black,
+                        modifier = Modifier
+                            .clickable {
+                                showTimePicker = true
+                                uiState.onTimeResChange(selectedTime.toString())
+                            }
+                    )
+                }
+            }
         }
 
         if (showDatePicker) {
@@ -200,27 +205,36 @@ fun PlantFormScreen(
         }
 
         if (showTimePicker) {
-            TimePickerDialog(
-                context,
-                { _, hour, minute ->
-                    selectedTime = LocalTime.of(hour, minute)
-                    uiState.onTimeResChange(selectedTime.toString())},
-                selectedTime.hour,
-                selectedTime.minute,
-                true
-            ).show()
+            LaunchedEffect(Unit) {
+                TimePickerDialog(
+                    context,
+                    { _, hour, minute ->
+                        selectedTime = LocalTime.of(hour, minute)
+                        uiState.onTimeResChange(selectedTime.toString())
+                    },
+                    selectedTime.hour,
+                    selectedTime.minute,
+                    true
+                ).show()
+                showTimePicker = false
+            }
         }
-
+        val onSave: () -> Unit = {
+            WorkScheduler.scheduleWateringReminder(
+                context,
+                selectedTime,
+                selectedDate,
+                uiState.name
+            )
+            onSaveClick()
+        }
 
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.BottomEnd
         ) {
-            SaveButton(onSaveClick)
-            WorkScheduler.scheduleWateringReminder(context, selectedTime, selectedDate, uiState.name)
-            println(uiState.name)
-            println(LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter))
-            println(uiState.timeToWater)
+            SaveButton(onSaveClick = onSave)
+
         }
 
     }
@@ -228,20 +242,44 @@ fun PlantFormScreen(
 
 @Composable
 fun SaveButton(onSaveClick: () -> Unit) {
-    Row(
-        Modifier
-            .padding(8.dp)
-            .clickable { onSaveClick() },
-        verticalAlignment = Alignment.CenterVertically
+    Button(
+        onClick = { onSaveClick() },
+        modifier = Modifier
+            .padding(16.dp),
+        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9DC384))
     ) {
         Icon(
             Icons.Filled.Done,
             contentDescription = "Save plant icon"
         )
-        Spacer(Modifier.size(4.dp))
-        Text(text = "Save")
+        Spacer(Modifier.size(8.dp))
+        Text(text = "Save", style = MaterialTheme.typography.bodyLarge,fontWeight = FontWeight.SemiBold)
     }
 }
+
+@Composable
+fun StyledInputField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
+) {
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        label = { Text(text = label) },
+        singleLine = true,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+        ),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+    )
+}
+
 
 @Composable
 fun InputField(
@@ -279,7 +317,7 @@ fun PlantFormScreenPreview() {
     PlantCareTheme {
         PlantFormScreen(
             uiState = PlantFormUiState(
-                topAppBarName = "Criando planta"
+                topAppBarName = "Creating New Plant"
             ),
             onSaveClick = {},
             onDeleteClick = {}
@@ -293,7 +331,7 @@ fun PlantFormScreenWithEditModePreview() {
     PlantCareTheme{
         PlantFormScreen(
             uiState = PlantFormUiState(
-                topAppBarName = "Editando plant",
+                topAppBarName = "Editing Plant",
                 isDeleteEnabled = true
             ),
             onSaveClick = {},

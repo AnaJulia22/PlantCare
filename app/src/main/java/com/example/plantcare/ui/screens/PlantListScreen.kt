@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -39,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -69,13 +71,15 @@ fun PlantListScreen(
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-    ){
+            .background(Color(0x339DC384))
+    ) {
         ExtendedFloatingActionButton(
             onClick = onNewPlantClick,
             Modifier
                 .padding(16.dp)
                 .align(Alignment.BottomEnd)
-                .zIndex(1f)
+                .zIndex(1f),
+            containerColor = Color(0xFF9DC384)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -83,28 +87,28 @@ fun PlantListScreen(
 
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Adicionar nova planta")
-                Text("Nova planta")
+                Text("New Plant")
             }
         }
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)
         ) {
             Header()
         }
         LazyColumn(
             Modifier
                 .fillMaxSize()
-                .padding(top = 60.dp)
+                .padding(top = 72.dp, start = 12.dp, end = 12.dp)
 
         ) {
             items(uiState.plants) { plant ->
-                var showPlantDetails by remember {
-                    mutableStateOf(false)
-                }
+
                 Row(Modifier
                     .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .border(0.5.dp, Color(0xFFEFEFEF), RoundedCornerShape(12.dp))
                     .combinedClickable(
                         onClick = {
                             expandedPlantId = if (expandedPlantId == plant.id) null else plant.id
@@ -112,55 +116,54 @@ fun PlantListScreen(
                         onLongClick = {
                             onPlantClick(plant)
                         }
-                    )) {
+                    )
+                    .padding(16.dp)
+                ) {
                     Box(
                         Modifier
-                            .padding(
-                                horizontal = 8.dp,
-                                vertical = 16.dp
-                            )
-                            .size(30.dp)
-                            .border(
-                                border = BorderStroke(2.dp, color = Color.Gray),
-                                shape = RoundedCornerShape(8.dp)
-                            )
+                            .size(35.dp)
                             .clip(shape = RoundedCornerShape(8.dp))
                             .clickable {
-                                Log.i("PlantListScreen", "$plant")
                                 uiState.onPlantWateredChange(plant)
-                            }
-                    ){
-                        if (plant.isWatered) {
-                            Icon(
-                                Icons.Filled.Done,
-                                contentDescription = "Done icon",
-                                Modifier
-                                    .size(100.dp),
-                                tint = Color.Green
-                            )
-                        }
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        val today = LocalDate.now().toEpochDay()
+                        val needsWatering = plant.nextWatering <= today
+                        val iconColor = if (!plant.isWatered && needsWatering) Color.Blue else Color.Gray
+                        Icon(
+                            painter = painterResource(id = R.drawable.water_drop),
+                            contentDescription = "Ícone de rega",
+                            tint = iconColor,
+                            modifier = Modifier.size(27.dp)
+                        )
                     }
                     Spacer(modifier = Modifier.width(12.dp))
                     Column(
-                        Modifier.padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                        modifier = Modifier
+                            .weight(1f)
+                            .align(Alignment.CenterVertically),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
                             text = plant.name,
                             style = TextStyle.Default.copy(
                                 fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.SemiBold
                             )
                         )
                         val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-                        plant.nextWatering.let { nextWatering ->
-                            AnimatedVisibility(visible = expandedPlantId == plant.id && nextWatering.toString().isNotBlank()) {
-                                Text(
-                                    text =  LocalDate.ofEpochDay(nextWatering).format(dateFormatter),
-                                    style = TextStyle.Default.copy(fontSize = 18.sp)
-                                )
-                            }
+
+                        AnimatedVisibility(visible = expandedPlantId == plant.id)
+                        {
+                            Text(
+                                text = "Próxima rega: ${
+                                    LocalDate.ofEpochDay(plant.nextWatering).format(dateFormatter)
+                                }",
+                                style = TextStyle(fontSize = 14.sp, color = Color.Gray)
+                            )
                         }
+
                     }
                 }
             }
@@ -171,18 +174,21 @@ fun PlantListScreen(
 @Composable
 fun Header() {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF9DC384))
+            .padding(vertical = 8.dp, horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.plant_icon), // Ícone da folha
+            painter = painterResource(id = R.drawable.potted_plant), // Ícone da folha
             contentDescription = "App Icon",
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(40.dp)
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = "PlantCare",
-            fontSize = 20.sp,
+            text = "My Plants",
+            fontSize = 24.sp,
             fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -204,7 +210,20 @@ fun PlantsListScreenPreview() {
     PlantCareTheme {
         PlantListScreen(
             uiState = PlantListUiState(
-
+                plants = listOf(
+                    Plant(
+                        id = "1",
+                        name = "Espada-de-São-Jorge",
+                        isWatered = false,
+                        nextWatering = LocalDate.now().toEpochDay(),
+                        wateringFrequency = "2",
+                        species = "especia de espada de sao jorge",
+                        lastWatered = "2023-09-01",
+                        imageRes = R.drawable.plant_icon,
+                        timeToWater = "13:00"
+                    )
+                ),
+                onPlantWateredChange = {}
             )
         )
     }

@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -31,10 +32,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.plantcare.R
 import com.example.plantcare.ui.states.SignInUiState
 import com.example.plantcare.ui.theme.PlantCareTheme
 
@@ -65,23 +70,24 @@ fun SignInScreen(
     Column(
         modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .verticalScroll(rememberScrollState())
+            .background(Color(0x339DC384)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
         Icon(
-            Icons.Filled.FavoriteBorder,
+            painter = painterResource(id = R.drawable.potted_plant),
             contentDescription = "Ícone minhas Plantas",
             Modifier
                 .clip(CircleShape)
                 .size(124.dp)
-                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                .background(Color(0xFF9DC384), CircleShape)
                 .padding(8.dp),
             tint = MaterialTheme.colorScheme.onPrimary
         )
 
         Spacer(modifier = Modifier.size(16.dp))
-        Text(text = "Minhas plantas", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Plant Care", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.size(16.dp))
         val textFieldModifier = Modifier
             .fillMaxWidth(0.8f)
@@ -113,14 +119,14 @@ fun SignInScreen(
                 )
             },
             label = {
-                Text("Senha")
+                Text("Password")
             },
             trailingIcon = {
                 val trailingIconModifier = Modifier
                     .clip(CircleShape)
                     .clickable {
-                    uiState.onTogglePasswordVisibility()
-                }
+                        uiState.onTogglePasswordVisibility()
+                    }
                 when (uiState.isShowPassword) {
                     true -> {
                         Icon(
@@ -146,17 +152,23 @@ fun SignInScreen(
             onClick = onSignInClick,
             Modifier
                 .fillMaxWidth(0.8f)
-                .padding(8.dp)
+                .padding(8.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9DC384))
         ) {
-            Text(text = "Entrar")
+            Text(text = "Sign In", style = MaterialTheme.typography.bodyLarge, color = Color.Black)
         }
         TextButton(
             onClick = onSignUpClick,
             Modifier
                 .fillMaxWidth(0.8f)
-                .padding(8.dp)
         ) {
-            Text(text = "Cadastrar")
+            Text(
+                text = "Sign Up",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    textDecoration = TextDecoration.Underline,
+                    color = Color.Black
+                )
+            )
         }
     }
 }
