@@ -26,13 +26,16 @@ fun NavGraphBuilder.homeGraph(
     ) {
         plantCareScreen(
             navController,
-            onNavigateToLogin = onNavigateToLogin
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToNewPlantForm = onNavigateToNewPlantForm
         )
 
         plantListScreen(
+            navController,
             onNavigateToNewPlantForm = onNavigateToNewPlantForm,
             onNavigateToEditPlantForm = onNavigateToEditPlantForm,
-            onNavigateToLogin = onNavigateToLogin
+            onNavigateToLogin = onNavigateToLogin,
+
         )
         plantFormScreen(onPopBackStack = onPopBackStack)
 

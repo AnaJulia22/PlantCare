@@ -2,6 +2,7 @@ package com.example.plantcare.ui.Navigation
 
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -14,6 +15,7 @@ import org.koin.androidx.compose.koinViewModel
 const val plantListRoute = "plantList"
 
 fun NavGraphBuilder.plantListScreen(
+    navController: NavController,
     onNavigateToNewPlantForm: () -> Unit,
     onNavigateToEditPlantForm: (Plant) -> Unit,
     onNavigateToLogin: () -> Unit
@@ -25,7 +27,8 @@ fun NavGraphBuilder.plantListScreen(
         PlantListScreen(
             uiState = uiState,
             onNewPlantClick = onNavigateToNewPlantForm,
-            onPlantClick = onNavigateToEditPlantForm
+            onPlantClick = onNavigateToEditPlantForm,
+            navController = navController
         )
     }
 }

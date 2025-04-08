@@ -25,13 +25,23 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,6 +52,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +60,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.navigation.NavController
 import com.example.plantcare.R
 import com.example.plantcare.models.Plant
 import com.example.plantcare.ui.states.PlantListUiState
@@ -57,49 +69,105 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun PlantListScreen(
     uiState: PlantListUiState,
+    navController: NavController,
     modifier: Modifier = Modifier,
     onNewPlantClick: () -> Unit = {},
-    onPlantClick: (Plant) -> Unit = {}
+    onPlantClick: (Plant) -> Unit = {},
+    onExitToAppClick: () -> Unit = {},
 ) {
     var expandedPlantId by remember { mutableStateOf<String?>(null) }
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .background(Color(0x339DC384))
-    ) {
-        ExtendedFloatingActionButton(
-            onClick = onNewPlantClick,
-            Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomEnd)
-                .zIndex(1f),
-            containerColor = Color(0xFF9DC384)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.potted_plant),
+                            contentDescription = "App Icon",
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            "My Plants",
+                            color = Color(0xFF6B4226),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF9DC384)
+                ),
+                actions = {
+                    IconButton(onClick = onExitToAppClick) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Sair do app",
+                            tint = Color(0xFF6B4226)
+                        )
+                    }
+                }
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = onNewPlantClick,
+                containerColor = Color(0xFF9DC384)
             ) {
-                Icon(Icons.Default.Add, contentDescription = "Adicionar nova planta")
-                Text("New Plant")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Adicionar nova planta",
+                        tint = Color(0xFF6B4226)
+                    )
+                    Text("New Plant", color = Color(0xFF6B4226))
+                }
+            }
+        },
+        containerColor = Color(0x339DC384),
+        modifier = modifier,
+        bottomBar = {
+            NavigationBar(
+                containerColor = Color(0xFF9DC384)
+            ) {
+                listOf(
+                    Icons.Default.Home to "Home" to "plantCareGraph",
+                    Icons.Default.Notifications to "Notifications" to "notifications",
+                    Icons.AutoMirrored.Filled.List to "My Plants" to "plantList",
+                    Icons.Default.CameraEnhance to "Identify" to "plant_identifier"
+                ).forEach { (iconLabelPair, route) ->
+                    val (icon, label) = iconLabelPair
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { navController.navigate(route) },
+                        icon = {
+                            Icon(
+                                icon,
+                                contentDescription = label,
+                                tint = Color(0xFF6B4226)
+                            )
+                        },
+                        label = { Text(label) }
+                    )
+                }
             }
         }
-        Column(
-            Modifier
-                .fillMaxSize()
-        ) {
-            Header()
-        }
+    ) { paddingValues ->
+
         LazyColumn(
-            Modifier
+            contentPadding = paddingValues,
+            modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 72.dp, start = 12.dp, end = 12.dp)
+                .padding(horizontal = 12.dp)
 
         ) {
             items(uiState.plants) { plant ->
@@ -130,7 +198,8 @@ fun PlantListScreen(
                     ) {
                         val today = LocalDate.now().toEpochDay()
                         val needsWatering = plant.nextWatering <= today
-                        val iconColor = if (!plant.isWatered && needsWatering) Color.Blue else Color.Gray
+                        val iconColor =
+                            if (!plant.isWatered && needsWatering) Color.Blue else Color.Gray
                         Icon(
                             painter = painterResource(id = R.drawable.water_drop),
                             contentDescription = "Ícone de rega",
@@ -163,13 +232,13 @@ fun PlantListScreen(
                                 style = TextStyle(fontSize = 14.sp, color = Color.Gray)
                             )
                         }
-
                     }
                 }
             }
         }
     }
 }
+
 
 @Composable
 fun Header() {
@@ -181,7 +250,7 @@ fun Header() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.potted_plant), // Ícone da folha
+            painter = painterResource(id = R.drawable.potted_plant),
             contentDescription = "App Icon",
             modifier = Modifier.size(40.dp)
         )
@@ -189,15 +258,15 @@ fun Header() {
         Text(
             text = "My Plants",
             fontSize = 24.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = Color(0xFF6B4226),
         )
         Spacer(modifier = Modifier.weight(1f))
         IconButton(onClick = { /* Notificação */ }) {
-            //Icon(Icons.Default.Add, contentDescription = "Adicionar nova planta")
             Icon(
                 Icons.Default.Notifications,
                 contentDescription = "Notifications",
-                tint = Color.Gray
+                tint = Color(0xFF6B4226)
             )
         }
     }
@@ -224,7 +293,8 @@ fun PlantsListScreenPreview() {
                     )
                 ),
                 onPlantWateredChange = {}
-            )
+            ),
+            navController = NavController(LocalContext.current)
         )
     }
 }

@@ -11,7 +11,9 @@ import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import com.example.plantcare.Repository.PlantRepository
 import com.example.plantcare.Repository.UserRepository
 import com.example.plantcare.Authentication.FirebaseAuthRepository
+import com.example.plantcare.GoogleAuthClient
 import com.example.plantcare.database.PlantDataBase
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import org.koin.android.ext.koin.androidContext
@@ -44,10 +46,17 @@ val storageModule = module {
     single {
         get<PlantDataBase>().plantDao()
     }
+
+
 }
 
 val firebaseModule = module {
     single {
         Firebase.auth
     }
+
+    single {
+        GoogleAuthClient(context = androidContext()) // ou com parâmetros se necessário
+    }
+
 }

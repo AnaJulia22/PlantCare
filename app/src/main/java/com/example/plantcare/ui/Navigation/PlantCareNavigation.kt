@@ -13,7 +13,8 @@ const val plantCareGraphRoute = "plantCareGraph"
 
 fun NavGraphBuilder.plantCareScreen(
     navController: NavController,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToNewPlantForm : () -> Unit
 ){
     composable(plantCareGraphRoute){
         val viewModel = koinViewModel<PlantCareViewModel>()
@@ -22,6 +23,9 @@ fun NavGraphBuilder.plantCareScreen(
             onExitToAppClick = {
                 viewModel.signOut()
                 onNavigateToLogin()
+            },
+            onNewPlantClick = {
+                onNavigateToNewPlantForm()
             }
         )
     }

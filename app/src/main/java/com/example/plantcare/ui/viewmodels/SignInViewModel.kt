@@ -3,7 +3,7 @@ package com.example.plantcare.ui.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.plantcare.Authentication.FirebaseAuthRepository
-import com.example.plantcare.Repository.UserRepository
+import com.example.plantcare.GoogleAuthClient
 import com.example.plantcare.ui.states.SignInUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 class SignInViewModel(
-    private val firebaseAuthRepository: FirebaseAuthRepository
+    private val firebaseAuthRepository: FirebaseAuthRepository,
+    private val googleAuthClient: GoogleAuthClient
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignInUiState())
@@ -63,6 +64,7 @@ class SignInViewModel(
                 it.copy(error = null)
             }
         }
+    }
 
     /*fun authenticate() {
         with(_uiState.value) {
@@ -76,5 +78,5 @@ class SignInViewModel(
             }
         }
     }*/
-    }
+
 }

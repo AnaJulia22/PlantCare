@@ -37,6 +37,7 @@ fun NavGraphBuilder.plantFormScreen(
                     onPopBackStack()
                 }
             },
+            onCancelClick = onPopBackStack,
             onDeleteClick = {
                 scope.launch {
                     viewModel.delete()

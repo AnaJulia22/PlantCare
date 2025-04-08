@@ -4,30 +4,23 @@ import android.app.TimePickerDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.plantcare.Application.WorkScheduler
-import com.example.plantcare.Repository.PlantRepository
-import com.example.plantcare.database.PlantDataBase
 import com.example.plantcare.ui.states.PlantFormUiState
 import com.example.plantcare.ui.theme.PlantCareTheme
-import kotlinx.coroutines.flow.firstOrNull
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
@@ -41,6 +34,7 @@ fun PlantFormScreen(
     uiState: PlantFormUiState,
     modifier: Modifier = Modifier,
     onSaveClick: () -> Unit,
+    onCancelClick: () -> Unit,
     onDeleteClick: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -89,25 +83,29 @@ fun PlantFormScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
             .navigationBarsPadding()
             .background(Color(0x339DC384)),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            val topAppBarName= uiState.topAppBarName
+            val topAppBarName = uiState.topAppBarName
             val deleteEnabled = uiState.isDeleteEnabled
             TopAppBar(
                 title = {
                     Text(
                         text = topAppBarName,
                         fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold)
+                        fontWeight = FontWeight.Bold
+                    )
                 },
                 actions = {
                     if (deleteEnabled) {
                         IconButton(onClick = onDeleteClick) {
-                            Icon(Icons.Filled.Delete, contentDescription = "Delete", tint = Color.Red)
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = "Delete",
+                                tint = Color.Red
+                            )
                         }
                     }
 
@@ -137,7 +135,7 @@ fun PlantFormScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0x809DC384 ))
+                colors = CardDefaults.cardColors(containerColor = Color(0x809DC384))
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     val lastWateredDate = uiState.lastWatered
@@ -148,9 +146,9 @@ fun PlantFormScreen(
                                 try {
                                     LocalDate.parse(it).format(dateFormatter)
                                 } catch (e: Exception) {
-                                    "Invalid date" // Mensagem de fallback
+                                    "Invalid date"
                                 }
-                            } ?: "Not set" // Mensagem para valor vazio/nulo
+                            } ?: "00/00/0000"
                         }",
                         fontSize = 16.sp,
                         color = Color.Black,
@@ -161,7 +159,8 @@ fun PlantFormScreen(
                             }
                     )
                     Spacer(modifier = Modifier.size(8.dp))
-                    val nextWateringFormatted = LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter)
+                    val nextWateringFormatted =
+                        LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter)
                     Text(
                         text = "Next Watering Date: $nextWateringFormatted",
                         fontSize = 16.sp,
@@ -188,7 +187,8 @@ fun PlantFormScreen(
                 confirmButton = {
                     TextButton(onClick = {
                         showDatePicker = false
-                        uiState.onLastWateredChange(selectedDate.toString())}) { Text("OK") }
+                        uiState.onLastWateredChange(selectedDate.toString())
+                    }) { Text("OK") }
                 }
             ) {
                 val datePickerState = rememberDatePickerState()
@@ -228,12 +228,23 @@ fun PlantFormScreen(
             )
             onSaveClick()
         }
-
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.BottomEnd
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            SaveButton(onSaveClick = onSave)
+            OutlinedButton(
+                onClick = { onCancelClick() },
+                modifier = Modifier
+                    .padding(8.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Black)
+            ) {
+                Text(text = "Cancel")
+            }
+
+                SaveButton(onSaveClick = onSave)
 
         }
 
@@ -248,12 +259,11 @@ fun SaveButton(onSaveClick: () -> Unit) {
             .padding(16.dp),
         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9DC384))
     ) {
-        Icon(
-            Icons.Filled.Done,
-            contentDescription = "Save plant icon"
+        Text(
+            text = "Save",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.Black
         )
-        Spacer(Modifier.size(8.dp))
-        Text(text = "Save", style = MaterialTheme.typography.bodyLarge,fontWeight = FontWeight.SemiBold)
     }
 }
 
@@ -320,6 +330,7 @@ fun PlantFormScreenPreview() {
                 topAppBarName = "Creating New Plant"
             ),
             onSaveClick = {},
+            onCancelClick = {},
             onDeleteClick = {}
         )
     }
@@ -328,13 +339,14 @@ fun PlantFormScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 fun PlantFormScreenWithEditModePreview() {
-    PlantCareTheme{
+    PlantCareTheme {
         PlantFormScreen(
             uiState = PlantFormUiState(
                 topAppBarName = "Editing Plant",
                 isDeleteEnabled = true
             ),
             onSaveClick = {},
+            onCancelClick = {},
             onDeleteClick = {},
         )
     }
