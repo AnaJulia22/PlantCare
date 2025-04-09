@@ -20,8 +20,8 @@ fun NavGraphBuilder.homeGraph(
     onNavigateToPlantDetails : () -> Unit
 ) {
     navigation(
-        //startDestination = plantListRoute,
-        startDestination = plantCareGraphRoute,
+        startDestination = plantListRoute,
+        //startDestination = plantCareGraphRoute,
         route = homeGraphRoute
     ) {
         plantCareScreen(

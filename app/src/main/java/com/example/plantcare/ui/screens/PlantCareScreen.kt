@@ -144,8 +144,8 @@ fun PlantCareScreen(
 
 val homeMenuItems = listOf(
     Triple(Icons.AutoMirrored.Filled.List, "My Plants", "plantList"),
-    Triple(Icons.Default.DateRange, "Calendar", "notifications"),
-    Triple(Icons.Default.Notifications, "Notifications", "notifications"),
+    //Triple(Icons.Default.DateRange, "Calendar", "notifications"),
+    //Triple(Icons.Default.Notifications, "Notifications", "notifications"),
     //Triple(Icons.Default.PlayArrow, "Time-lapse", "timelapse"),
     Triple(Icons.Default.CameraEnhance, "Identify", "plant_identifier")
 )

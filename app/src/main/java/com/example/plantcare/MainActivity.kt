@@ -35,30 +35,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val db = PlantDataBase.getDatabase(this)
-        val plantDao = db.plantDao()
-
         FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         val googleAuthClient = GoogleAuthClient(this)
-
-        //val plantRepository = PlantRepository()
-        //val viewModel = PlantViewModel(plantRepository)
-
         setContent {
             PlantCareTheme {
                 val navController = rememberNavController()
                 var startDestination by rememberSaveable { mutableStateOf<String?>(null) }
-                /*var isSignIn by rememberSavable {
-                    mutableStateOf(googleAuthClient.isSingedIn())
-                }
-
-                LaunchedEffect(Unit) {
-                    if (isSignIn) {
-                        navController.navigate("plantCare")
-                    }
-                }
-*/
 
                 LaunchedEffect(Unit) {
                     startDestination = if (googleAuthClient.isSingedIn()) {

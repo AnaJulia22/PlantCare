@@ -39,7 +39,6 @@ fun PlantFormScreen(
 ) {
     val context = LocalContext.current
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
-    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     var selectedDate by remember {
         mutableStateOf(
             uiState.lastWatered?.takeIf { it.isNotEmpty() }?.let {

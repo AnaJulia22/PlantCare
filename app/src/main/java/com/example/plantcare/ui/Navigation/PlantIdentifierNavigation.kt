@@ -10,7 +10,6 @@ import androidx.navigation.compose.composable
 import com.example.plantcare.ui.screens.PlantIdentifierScreen
 import com.example.plantcare.ui.states.PlantIdentifierUiState
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
-import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import org.koin.androidx.compose.koinViewModel
 
 const val plantIdentifierRoute = "plant_identifier"
@@ -23,9 +22,6 @@ fun NavGraphBuilder.plantIdentifierScreen(
         val viewModel = koinViewModel<PlantIdentifierViewModel>(
             viewModelStoreOwner = entry
         )
-        //val viewModel = koinViewModel<PlantIdentifierViewModel>()
-        //val uiState by viewModel.uiState.collectAsState()
-
         PlantIdentifierScreen(
             viewModel = viewModel,
             onImageSelected = viewModel::identify,

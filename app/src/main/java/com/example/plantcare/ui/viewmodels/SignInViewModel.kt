@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 class SignInViewModel(
-    private val firebaseAuthRepository: FirebaseAuthRepository,
-    private val googleAuthClient: GoogleAuthClient
+    private val firebaseAuthRepository: FirebaseAuthRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SignInUiState())
@@ -65,18 +64,4 @@ class SignInViewModel(
             }
         }
     }
-
-    /*fun authenticate() {
-        with(_uiState.value) {
-            _uiState.update {
-                it.copy(
-                    isAuthenticated = repository.authenticate(
-                        user,
-                        password
-                    )
-                )
-            }
-        }
-    }*/
-
 }

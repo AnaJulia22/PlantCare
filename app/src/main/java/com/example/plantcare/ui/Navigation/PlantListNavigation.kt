@@ -28,7 +28,11 @@ fun NavGraphBuilder.plantListScreen(
             uiState = uiState,
             onNewPlantClick = onNavigateToNewPlantForm,
             onPlantClick = onNavigateToEditPlantForm,
-            navController = navController
+            navController = navController,
+            onExitToAppClick = {
+                viewModel.signOut()
+                onNavigateToLogin()
+            },
         )
     }
 }

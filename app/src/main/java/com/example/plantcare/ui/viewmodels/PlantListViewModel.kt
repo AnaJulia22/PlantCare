@@ -39,5 +39,4 @@ class PlantListViewModel (
     fun signOut() {
         firebaseAuthRepository.signOut()
     }
-
 }
