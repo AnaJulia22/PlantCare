@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,19 +39,30 @@ import java.io.File
 @Composable
 fun CameraScreen(
     viewModel: PlantIdentifierViewModel,
+    onImageCaptured: (Uri) -> Unit,
     onNavigateToResult: () -> Unit
 ) {
+    val uiState by viewModel.uiState.collectAsState()
     CameraCapture(
         onImageFile = { uri, context ->
             viewModel.identify(uri, context)
-            onNavigateToResult()
+        },
+        onImageCaptured = { uri ->
+            onImageCaptured(uri)
         }
     )
+
+    LaunchedEffect(uiState) {
+        if (uiState.plantName.isNotBlank() && !uiState.isLoading) {
+            onNavigateToResult()
+        }
+    }
 }
 
 @Composable
 fun CameraCapture(
-    onImageFile: (Uri, Context) -> Unit
+    onImageFile: (Uri, Context) -> Unit,
+    onImageCaptured: (Uri) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -98,6 +110,7 @@ fun CameraCapture(
                         override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                             val uri = Uri.fromFile(photoFile)
                             onImageFile(uri, context)
+                            onImageCaptured(uri)
                         }
 
                         override fun onError(exception: ImageCaptureException) {

@@ -45,7 +45,7 @@ fun PlantFormScreen(
                 try {
                     LocalDate.parse(it)
                 } catch (e: Exception) {
-                    LocalDate.now()
+                    null
                 }
             } ?: LocalDate.now()
         )
@@ -57,7 +57,7 @@ fun PlantFormScreen(
                 try {
                     LocalTime.parse(it)
                 } catch (e: Exception) {
-                    LocalTime.now()
+                    null
                 }
             } ?: LocalTime.now()
         )
@@ -161,13 +161,15 @@ fun PlantFormScreen(
                     val nextWateringFormatted =
                         LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter)
                     Text(
-                        text = "Next Watering Date: $nextWateringFormatted",
+                        text = "Next Watering Date: ${
+                            nextWateringFormatted?.format(dateFormatter) ?: "00/00/0000"
+                        }",
                         fontSize = 16.sp,
                         color = Color.Black
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = "Watering Time: $time",
+                        text = "Watering Time: ${selectedTime?.toString() ?: "--:--"}",
                         fontSize = 16.sp,
                         color = Color.Black,
                         modifier = Modifier

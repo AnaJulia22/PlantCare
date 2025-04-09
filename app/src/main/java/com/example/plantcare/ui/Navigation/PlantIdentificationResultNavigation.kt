@@ -1,5 +1,6 @@
 package com.example.plantcare.ui.Navigation
 
+import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,5 +37,6 @@ fun NavGraphBuilder.plantResultScreen(
 }
 
 fun NavHostController.navigateToPlantResult() {
+    Log.d("NAVIGATION", "Navegando para resultados")
     navigate(plantResultRoute)
 }
