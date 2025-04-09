@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -71,9 +72,10 @@ fun PlantIdentifierScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Identify your plant 🌱",
+            text = "PlantCare AI 🌱",
             style = MaterialTheme.typography.headlineSmall,
-            color = Color(0xFF6B4226)
+            color = Color(0xFF6B4226),
+            fontWeight = FontWeight.SemiBold
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -82,7 +84,7 @@ fun PlantIdentifierScreen(
             onClick = { launcher.launch("image/*") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF9DC384),
-                contentColor = Color(0xFF6B4226) // cor do texto e ícones
+                contentColor = Color(0xFF6B4226)
             ),
             modifier = Modifier
                 .fillMaxSize(0.8f)
@@ -97,7 +99,7 @@ fun PlantIdentifierScreen(
             onClick = onOpenCamera,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF9DC384),
-                contentColor = Color(0xFF6B4226) // cor do texto e ícones
+                contentColor = Color(0xFF6B4226)
             ),
             modifier = Modifier
                 .fillMaxSize(0.8f)

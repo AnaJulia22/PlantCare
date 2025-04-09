@@ -37,6 +37,11 @@ class SignUpViewModel(
                     _uiState.update {
                         it.copy(confirmPassword = password)
                     }
+                },
+                onTogglePasswordVisibility = {
+                    _uiState.update {
+                        it.copy(isShowPassword = !_uiState.value.isShowPassword)
+                    }
                 }
             )
         }

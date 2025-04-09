@@ -1,4 +1,4 @@
-package com.example.plantcare
+package com.example.plantcare.Authentication
 
 import android.app.Activity
 import android.content.Context

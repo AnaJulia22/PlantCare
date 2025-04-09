@@ -22,12 +22,6 @@ interface PlantIdService {
     ): Response<PlantResponse>
 }
 
-fun imageToBase64(uri: Uri, context: Context): String {
-    val inputStream = context.contentResolver.openInputStream(uri)
-    val bytes = inputStream?.readBytes() ?: return ""
-    return Base64.encodeToString(bytes, Base64.NO_WRAP)
-}
-
 fun getRetrofit(): PlantIdService {
     val retrofit = Retrofit.Builder()
         .baseUrl("https://plant.id/api/v3/")
