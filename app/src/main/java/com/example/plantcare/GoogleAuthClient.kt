@@ -63,10 +63,6 @@ class GoogleAuthClient (
 
                 val tokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
 
-                println(tag + "name: ${tokenCredential.displayName}")
-                println(tag + "email: ${tokenCredential.id}")
-                println(tag + "image: ${tokenCredential.profilePictureUri}")
-
                 val authCredential = GoogleAuthProvider.getCredential(
                     tokenCredential.idToken, null
                 )
@@ -111,18 +107,3 @@ class GoogleAuthClient (
         firebaseAuth.signOut()
     }
 }
-
-/*private fun buildSignInRequest(): BeginSignInRequest {
-        return BeginSignInRequest.builder()
-            .setGoogleIdTokenRequestOptions(
-                GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    .setFilterByAuthorizedAccounts(false)
-                    .setServerClientId(context.getString(R.string.web_client_id))
-                    .build()
-            )
-            .setAutoSelectEnabled(true)
-            .build()
-    }*//*
-
-}*/

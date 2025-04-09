@@ -21,17 +21,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.dp
 fun SignUpScreen(
     uiState: SignUpUiState,
     onSignUpClick: () -> Unit,
+    onSignInClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -63,7 +67,7 @@ fun SignUpScreen(
     Spacer(modifier = Modifier.height(16.dp))
 
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().background(Color(0x339DC384)),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -75,13 +79,12 @@ fun SignUpScreen(
         ) {
 
             Text(
-                text = "Cadastrando usuário",
+                text = "Sign Up",
                 Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                style = MaterialTheme.typography.headlineMedium
+                    .padding(8.dp),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.size(16.dp))
             Column(
                 Modifier
                     .fillMaxWidth(0.9f)
@@ -117,7 +120,7 @@ fun SignUpScreen(
                         )
                     },
                     label = {
-                        Text(text = "Senha")
+                        Text(text = "Password")
                     },
                     visualTransformation = PasswordVisualTransformation()
                 )
@@ -133,15 +136,30 @@ fun SignUpScreen(
                         )
                     },
                     label = {
-                        Text(text = "Confirmar senha")
+                        Text(text = "Confirm Password")
                     },
                     visualTransformation = PasswordVisualTransformation()
                 )
                 Button(
                     onClick = onSignUpClick,
-                    Modifier.fillMaxWidth()
+                    Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF9DC384))
                 ) {
-                    Text(text = "Cadastrar")
+                    Text(text = "Sign Up", style = MaterialTheme.typography.bodyLarge, color = Color.Black)
+                }
+
+                TextButton(
+                    onClick = onSignInClick,
+                    Modifier
+                        .fillMaxWidth(0.8f)
+                ) {
+                    Text(
+                        text = "Sign In",
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            textDecoration = TextDecoration.Underline,
+                            color = Color.Black
+                        )
+                    )
                 }
             }
         }
@@ -155,7 +173,8 @@ fun SignUpScreenPreview() {
     PlantCareTheme {
         SignUpScreen(
             uiState = SignUpUiState(),
-            onSignUpClick = {}
+            onSignUpClick = {},
+            onSignInClick = {}
         )
     }
 }
@@ -168,7 +187,8 @@ fun SignUpScreen1Preview() {
             uiState = SignUpUiState(
                 error = "Error"
             ),
-            onSignUpClick = {}
+            onSignUpClick = {},
+            onSignInClick = {}
         )
     }
 }

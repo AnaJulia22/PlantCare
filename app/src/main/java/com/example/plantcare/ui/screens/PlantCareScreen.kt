@@ -1,73 +1,117 @@
 package com.example.plantcare.ui.screens
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraEnhance
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.plantcare.R
-import com.example.plantcare.models.Plant
-import com.example.plantcare.ui.states.PlantListUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PlantCareScreen(
     navController: NavController,
-    onExitToAppClick: () -> Unit = {}
+    onExitToAppClick: () -> Unit = {},
+    onNewPlantClick: () -> Unit = {}
 ) {
     Scaffold(
+        containerColor = Color(0x339DC384),
         topBar = {
+
             TopAppBar(
-                title = { Text("PlantCare") },
+                title = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.potted_plant),
+                            contentDescription = "App Icon",
+                            modifier = Modifier.size(40.dp)
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Text(
+                            "PlantCare",
+                            color = Color(0xFF6B4226),
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFF9DC384)
+                ),
                 actions = {
                     IconButton(onClick = onExitToAppClick) {
-                        Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = "Sair do app")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ExitToApp,
+                            contentDescription = "Sair do app",
+                            tint = Color(0xFF6B4226)
+                        )
                     }
                 }
             )
         },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                onClick = onNewPlantClick,
+                containerColor = Color(0xFF9DC384)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = "Adicionar nova planta",
+                        tint = Color(0xFF6B4226)
+                    )
+                    Text("New Plant", color = Color(0xFF6B4226))
+                }
+            }
+        },
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                containerColor = Color(0xFF9DC384)
+            ) {
                 listOf(
                     Icons.Default.Home to "Home" to "home",
-                    Icons.Default.Notifications to "Lembretes" to "notifications",
-                    Icons.Default.PlayArrow to "Time-lapse" to "timelapse",
-                    Icons.Default.CameraEnhance to "Identificação" to "plant_identifier"
+                    Icons.Default.Notifications to "Notifications" to "notifications",
+                    Icons.AutoMirrored.Filled.List to "My Plants" to "plantList",
+                    Icons.Default.CameraEnhance to "Identify" to "plant_identifier"
                 ).forEach { (iconLabelPair, route) ->
                     val (icon, label) = iconLabelPair
                     NavigationBarItem(
                         selected = false,
                         onClick = { navController.navigate(route) },
-                        icon = { Icon(icon, contentDescription = label) },
+                        icon = {
+                            Icon(
+                                icon,
+                                contentDescription = label,
+                                tint = Color(0xFF6B4226)
+                            )
+                        },
                         label = { Text(label) }
                     )
                 }
@@ -81,8 +125,6 @@ fun PlantCareScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Text("Acesso Rápido", style = MaterialTheme.typography.headlineSmall)
-
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 160.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -101,12 +143,11 @@ fun PlantCareScreen(
 }
 
 val homeMenuItems = listOf(
-    Triple(Icons.AutoMirrored.Filled.List, "Minhas Plantas", "plantList"),
-    Triple(Icons.Default.DateRange, "Cronograma", "notifications"),
-    Triple(Icons.Default.Notifications, "Notificações", "notifications"),
-    Triple(Icons.Default.PlayArrow, "Time-lapse", "timelapse"),
-    Triple(Icons.Default.Info, "Diário", "plant_diary"),
-    Triple(Icons.Default.CameraEnhance, "Identificação", "plant_identifier")
+    Triple(Icons.AutoMirrored.Filled.List, "My Plants", "plantList"),
+    //Triple(Icons.Default.DateRange, "Calendar", "notifications"),
+    //Triple(Icons.Default.Notifications, "Notifications", "notifications"),
+    //Triple(Icons.Default.PlayArrow, "Time-lapse", "timelapse"),
+    Triple(Icons.Default.CameraEnhance, "Identify", "plant_identifier")
 )
 
 @Composable
@@ -125,7 +166,7 @@ fun HomeMenuButton(icon: ImageVector, text: String, onClick: () -> Unit) {
             Icon(
                 icon,
                 contentDescription = text,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = Color(0xFF6B4226),
                 modifier = Modifier.size(32.dp)
             )
             Spacer(modifier = Modifier.height(8.dp))

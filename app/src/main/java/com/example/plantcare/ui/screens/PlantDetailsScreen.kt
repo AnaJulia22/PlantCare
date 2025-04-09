@@ -24,12 +24,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.plantcare.data.remote.dto.Description
-import com.example.plantcare.data.remote.dto.Details
-import com.example.plantcare.data.remote.dto.Image
 import com.example.plantcare.ui.states.PlantIdentifierUiState
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
-import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

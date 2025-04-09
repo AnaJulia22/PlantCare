@@ -3,7 +3,7 @@ package com.example.plantcare.ui.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.plantcare.Authentication.FirebaseAuthRepository
-import com.example.plantcare.Repository.UserRepository
+import com.example.plantcare.GoogleAuthClient
 import com.example.plantcare.ui.states.SignInUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,18 +63,5 @@ class SignInViewModel(
                 it.copy(error = null)
             }
         }
-
-    /*fun authenticate() {
-        with(_uiState.value) {
-            _uiState.update {
-                it.copy(
-                    isAuthenticated = repository.authenticate(
-                        user,
-                        password
-                    )
-                )
-            }
-        }
-    }*/
     }
 }

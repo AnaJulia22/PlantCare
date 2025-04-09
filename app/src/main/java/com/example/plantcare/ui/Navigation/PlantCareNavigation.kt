@@ -4,7 +4,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.example.plantcare.Authentication.FirebaseAuthRepository
 import com.example.plantcare.ui.screens.PlantCareScreen
 import com.example.plantcare.ui.viewmodels.PlantCareViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -13,7 +12,8 @@ const val plantCareGraphRoute = "plantCareGraph"
 
 fun NavGraphBuilder.plantCareScreen(
     navController: NavController,
-    onNavigateToLogin: () -> Unit
+    onNavigateToLogin: () -> Unit,
+    onNavigateToNewPlantForm : () -> Unit
 ){
     composable(plantCareGraphRoute){
         val viewModel = koinViewModel<PlantCareViewModel>()
@@ -22,6 +22,9 @@ fun NavGraphBuilder.plantCareScreen(
             onExitToAppClick = {
                 viewModel.signOut()
                 onNavigateToLogin()
+            },
+            onNewPlantClick = {
+                onNavigateToNewPlantForm()
             }
         )
     }

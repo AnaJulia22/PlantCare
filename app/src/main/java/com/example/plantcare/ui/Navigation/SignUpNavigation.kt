@@ -33,7 +33,8 @@ fun NavGraphBuilder.signUpScreen(
                 scope.launch {
                     viewModel.signUp()
                 }
-            }
+            },
+            onSignInClick = onNavigationToSignIn
         )
     }
 }

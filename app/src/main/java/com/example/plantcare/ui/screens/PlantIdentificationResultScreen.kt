@@ -35,9 +35,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.plantcare.Repository.PlantSuggestionRepository
 import com.example.plantcare.ui.states.PlantIdentifierUiState
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
-import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -47,12 +47,6 @@ fun PlantIdentificationResultScreen(
 ) {
     val uiState = viewModel.uiState.collectAsState().value
     val context = LocalContext.current
-    Log.d("DEBUG_RESULT", "Chegou aqui1")
-
-    LaunchedEffect(Unit) {
-        Log.d("DEBUG_RESULT", "Estado atual: ${uiState?.plantName}")
-    }
-
     if (uiState.plantName.isBlank()) {
         if (uiState.isLoading) {
             CircularProgressIndicator()
@@ -165,7 +159,6 @@ fun PlantIdentificationResultScreen(
 fun PreviewPlantIdentificationResultScreen() {
 
     PlantIdentificationResultScreen(
-        viewModel = PlantIdentifierViewModel(),
         onDetailsClick = { /* Preview: no-op */ }
     )
 }

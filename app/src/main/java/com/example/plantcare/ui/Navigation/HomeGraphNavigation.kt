@@ -20,19 +20,22 @@ fun NavGraphBuilder.homeGraph(
     onNavigateToPlantDetails : () -> Unit
 ) {
     navigation(
-        //startDestination = plantListRoute,
-        startDestination = plantCareGraphRoute,
+        startDestination = plantListRoute,
+        //startDestination = plantCareGraphRoute,
         route = homeGraphRoute
     ) {
         plantCareScreen(
             navController,
-            onNavigateToLogin = onNavigateToLogin
+            onNavigateToLogin = onNavigateToLogin,
+            onNavigateToNewPlantForm = onNavigateToNewPlantForm
         )
 
         plantListScreen(
+            navController,
             onNavigateToNewPlantForm = onNavigateToNewPlantForm,
             onNavigateToEditPlantForm = onNavigateToEditPlantForm,
-            onNavigateToLogin = onNavigateToLogin
+            onNavigateToLogin = onNavigateToLogin,
+
         )
         plantFormScreen(onPopBackStack = onPopBackStack)
 

@@ -12,6 +12,6 @@ data class PlantIdentifierUiState(
     val toxicity: String = "",
     val plantUrl: String = "",
     val bestWatering: String = "",
-    val suggestions: List<Suggestion> = emptyList(), // se quiser exibir todos
+    val suggestions: List<Suggestion> = emptyList(),
     val errorMessage: String? = null
 )

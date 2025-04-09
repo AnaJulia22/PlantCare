@@ -84,11 +84,6 @@ class PlantIdentifierViewModel(
         }
     }
 
-    fun restoreLastState() {
-        lastValidState?.let { state ->
-            _uiState.update { state }
-        }
-    }
 
     private fun imageToBase64(uri: Uri, context: Context): String {
         val inputStream = context.contentResolver.openInputStream(uri)

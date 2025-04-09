@@ -8,7 +8,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.plantcare.ui.screens.CameraScreen
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
-import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import org.koin.androidx.compose.koinViewModel
 
 const val cameraCaptureRoute = "camera"
@@ -17,7 +16,6 @@ fun NavGraphBuilder.cameraScreen (
 ) {
     composable(cameraCaptureRoute) {
         val viewModel = koinViewModel<PlantIdentifierViewModel>()
-        val resultViewModel = koinViewModel<PlantResultViewModel>()
         val uiState by viewModel.uiState.collectAsState()
 
 
@@ -29,7 +27,6 @@ fun NavGraphBuilder.cameraScreen (
         // Se identificou a planta e ainda não navegou
         if (uiState.plantName != null && !uiState.isLoading && uiState.errorMessage == null) {
             LaunchedEffect(uiState.plantName) {
-                resultViewModel.setResult(uiState)
                 onNavigateToResult()
             }
         }

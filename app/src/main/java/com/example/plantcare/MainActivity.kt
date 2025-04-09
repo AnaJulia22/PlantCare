@@ -4,12 +4,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.example.plantcare.database.PlantDataBase
 import com.example.plantcare.ui.Navigation.authGraph
 import com.example.plantcare.ui.Navigation.authGraphRoute
 import com.example.plantcare.ui.Navigation.homeGraph
+import com.example.plantcare.ui.Navigation.homeGraphRoute
 import com.example.plantcare.ui.Navigation.navigateToCamera
 import com.example.plantcare.ui.Navigation.navigateToEditPlantForm
 import com.example.plantcare.ui.Navigation.navigateToHomeGraph
@@ -29,67 +35,61 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val db = PlantDataBase.getDatabase(this)
-        val plantDao = db.plantDao()
-
         FirebaseApp.initializeApp(this)
         enableEdgeToEdge()
         val googleAuthClient = GoogleAuthClient(this)
-
-        //val plantRepository = PlantRepository()
-        //val viewModel = PlantViewModel(plantRepository)
-        
         setContent {
             PlantCareTheme {
                 val navController = rememberNavController()
-                /*var isSignIn by rememberSavable {
-                    mutableStateOf(googleAuthClient.isSingedIn())
-                }
+                var startDestination by rememberSaveable { mutableStateOf<String?>(null) }
 
                 LaunchedEffect(Unit) {
-                    if (isSignIn) {
-                        navController.navigate("plantCare")
+                    startDestination = if (googleAuthClient.isSingedIn()) {
+                        homeGraphRoute
+                    } else {
+                        authGraphRoute
                     }
                 }
-*/
-                NavHost(
-                    navController = navController,
-                    startDestination = authGraphRoute
-                ){
-                    authGraph(
-                        onNavigateToHomeGraph = {
-                            navController.navigateToHomeGraph(it)
-                        }, onNavigateToSignIn = {
-                            navController.navigateToSignIn(it)
-                        },
-                        onNavigateToSignUp = {
-                            navController.navigateToSignUp()
-                        }
-                    )
-                    homeGraph(
-                        onNavigateToNewPlantForm = {
-                            navController.navigateToNewPlantForm()
-                        },
-                        onNavigateToEditPlantForm = { plant ->
-                            navController.navigateToEditPlantForm(plant)
-                        },
-                        onPopBackStack = {
-                            navController.popBackStack()
-                        },
+                startDestination?.let {
+                    NavHost(
                         navController = navController,
-                        onNavigateToLogin = {
-                            navController.navigateToSignIn()
-                        },
-                        onNavigateToCamera = {
-                            navController.navigateToCamera()
-                        },
-                        onNavigateToResult = {
-                            navController.navigateToPlantResult()
-                        },
-                        onNavigateToPlantDetails = {
-                            navController.navigateToPlantResultDetails()
-                        }
-                    )
+                        startDestination = it
+                    ) {
+                        authGraph(
+                            onNavigateToHomeGraph = {
+                                navController.navigateToHomeGraph(it)
+                            }, onNavigateToSignIn = {
+                                navController.navigateToSignIn(it)
+                            },
+                            onNavigateToSignUp = {
+                                navController.navigateToSignUp()
+                            }
+                        )
+                        homeGraph(
+                            onNavigateToNewPlantForm = {
+                                navController.navigateToNewPlantForm()
+                            },
+                            onNavigateToEditPlantForm = { plant ->
+                                navController.navigateToEditPlantForm(plant)
+                            },
+                            onPopBackStack = {
+                                navController.popBackStack()
+                            },
+                            navController = navController,
+                            onNavigateToLogin = {
+                                navController.navigateToSignIn()
+                            },
+                            onNavigateToCamera = {
+                                navController.navigateToCamera()
+                            },
+                            onNavigateToResult = {
+                                navController.navigateToPlantResult()
+                            },
+                            onNavigateToPlantDetails = {
+                                navController.navigateToPlantResultDetails()
+                            }
+                        )
+                    }
                 }
             }
         }

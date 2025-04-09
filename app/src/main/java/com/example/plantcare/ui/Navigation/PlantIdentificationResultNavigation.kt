@@ -9,7 +9,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.example.plantcare.ui.screens.PlantIdentificationResultScreen
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
-import com.example.plantcare.ui.viewmodels.PlantResultViewModel
 import org.koin.androidx.compose.koinViewModel
 
 const val plantResultRoute = "plant_result"
