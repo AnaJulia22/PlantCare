@@ -10,25 +10,36 @@ import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
 class WorkScheduler {
-
     companion object {
-        fun scheduleWateringReminder(context: Context, selectedTime: LocalTime, selectedDate: LocalDate, plantName: String) {
+        fun scheduleWateringReminder(
+            context: Context,
+            selectedTime: LocalTime,
+            selectedDate: LocalDate,
+            plantName: String
+        ) {
             val workManager = WorkManager.getInstance(context)
-
             val targetTime = selectedDate.atTime(selectedTime)
             val currentTime = LocalDate.now().atTime(LocalTime.now())
+            if (selectedDate.isAfter(LocalDate.now()) ||
+                (selectedDate.isEqual(LocalDate.now()) && selectedTime.isAfter(LocalTime.now()))
+            ) {
+                var delay = targetTime.atZone(ZoneId.systemDefault()).toInstant()
+                    .toEpochMilli() - currentTime.atZone(ZoneId.systemDefault()).toInstant()
+                    .toEpochMilli()
+                if (delay < 0) {
+                    delay += TimeUnit.DAYS.toMillis(1)
+                }
 
-            var delay = targetTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli() - currentTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-            if (delay < 0) {
-                delay += TimeUnit.DAYS.toMillis(1)
+                val workRequest = OneTimeWorkRequestBuilder<PlantWateringScheduler>()
+                    .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                    .setInputData(workDataOf("plant_name" to plantName))
+                    .build()
+
+                workManager.enqueue(workRequest)
+                println("Notificação agendada para $targetTime (em ${delay / 1000 / 60} minutos)")
+            } else {
+                println("Não agendado - data/hora já passou: $targetTime")
             }
-
-            val workRequest = OneTimeWorkRequestBuilder<PlantWateringScheduler>()
-                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                .setInputData(workDataOf("plant_name" to plantName))
-                .build()
-
-            workManager.enqueue(workRequest)
         }
     }
 }
