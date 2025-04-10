@@ -3,7 +3,6 @@ package com.example.plantcare.ui.viewmodels
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.plantcare.Authentication.FirebaseAuthRepository
-import com.example.plantcare.GoogleAuthClient
 import com.example.plantcare.ui.states.SignInUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -1,8 +1,11 @@
 package com.example.plantcare.ui.Navigation
 
+import android.util.Log
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
@@ -12,27 +15,31 @@ import org.koin.androidx.compose.koinViewModel
 
 const val cameraCaptureRoute = "camera"
 fun NavGraphBuilder.cameraScreen (
+    navController: NavController,
     onNavigateToResult: () -> Unit
 ) {
-    composable(cameraCaptureRoute) {
-        val viewModel = koinViewModel<PlantIdentifierViewModel>()
-        val uiState by viewModel.uiState.collectAsState()
-
+    composable(cameraCaptureRoute) {entry ->
+        val parentEntry = remember(entry) {
+            navController.getBackStackEntry(plantIdentifierRoute)
+        }
+        val viewModel: PlantIdentifierViewModel = koinViewModel(
+            viewModelStoreOwner = parentEntry
+        )
 
         CameraScreen(
             viewModel = viewModel,
+            onImageCaptured = { uri ->
+                navController.previousBackStackEntry
+                    ?.savedStateHandle
+                    ?.set("capturedImageUri", uri)
+
+            },
             onNavigateToResult = onNavigateToResult
         )
-
-        // Se identificou a planta e ainda não navegou
-        if (uiState.plantName != null && !uiState.isLoading && uiState.errorMessage == null) {
-            LaunchedEffect(uiState.plantName) {
-                onNavigateToResult()
-            }
-        }
     }
 }
 
 fun NavHostController.navigateToCamera() {
+    Log.d("NAVIGATION", "Navigating to camera screen")
     navigate(cameraCaptureRoute)
 }

@@ -45,6 +45,7 @@ fun NavGraphBuilder.homeGraph(
         )
 
         cameraScreen(
+            navController = navController,
             onNavigateToResult = onNavigateToResult
         )
 

@@ -14,7 +14,7 @@ import com.example.plantcare.ui.screens.SignInScreen
 import com.example.plantcare.ui.viewmodels.SignInViewModel
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.ui.platform.LocalContext
-import com.example.plantcare.GoogleAuthClient
+import com.example.plantcare.Authentication.GoogleAuthClient
 import kotlinx.coroutines.launch
 
 const val signInRoute: String = "signIn"

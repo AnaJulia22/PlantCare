@@ -30,8 +30,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
 import com.example.plantcare.ui.states.PlantIdentifierUiState
 import com.example.plantcare.ui.viewmodels.PlantIdentifierViewModel
@@ -47,6 +49,17 @@ fun PlantIdentifierScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val scrollState = rememberScrollState()
+
+    val navController = rememberNavController() // ou passe por parâmetro
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+
+    LaunchedEffect(savedStateHandle?.get<Uri>("capturedImageUri")) {
+        val capturedUri = savedStateHandle?.get<Uri>("capturedImageUri")
+        capturedUri?.let {
+            onImageSelected(it, context)
+            savedStateHandle.remove<Uri>("capturedImageUri")
+        }
+    }
 
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -71,9 +84,10 @@ fun PlantIdentifierScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Identify your plant 🌱",
+            text = "PlantCare AI 🌱",
             style = MaterialTheme.typography.headlineSmall,
-            color = Color(0xFF6B4226)
+            color = Color(0xFF6B4226),
+            fontWeight = FontWeight.SemiBold
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -82,7 +96,7 @@ fun PlantIdentifierScreen(
             onClick = { launcher.launch("image/*") },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF9DC384),
-                contentColor = Color(0xFF6B4226) // cor do texto e ícones
+                contentColor = Color(0xFF6B4226)
             ),
             modifier = Modifier
                 .fillMaxSize(0.8f)
@@ -97,7 +111,7 @@ fun PlantIdentifierScreen(
             onClick = onOpenCamera,
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF9DC384),
-                contentColor = Color(0xFF6B4226) // cor do texto e ícones
+                contentColor = Color(0xFF6B4226)
             ),
             modifier = Modifier
                 .fillMaxSize(0.8f)

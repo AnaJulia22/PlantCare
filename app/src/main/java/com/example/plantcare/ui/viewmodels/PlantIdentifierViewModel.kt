@@ -5,6 +5,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.plantcare.BuildConfig
 import com.example.plantcare.api.getRetrofit
 import com.example.plantcare.data.remote.dto.PlantRequest
 import com.example.plantcare.ui.states.PlantIdentifierUiState
@@ -22,7 +23,7 @@ class PlantIdentifierViewModel(
     fun identify(uri: Uri, context: Context) {
         val imageBase64 = imageToBase64(uri, context)
         val request = PlantRequest(images = listOf(imageBase64))
-
+        val apiKey = BuildConfig.API_KEY
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true) }
             try {
@@ -36,7 +37,7 @@ class PlantIdentifierViewModel(
                     "toxicity"
                 ).joinToString(",")
                 val response = getRetrofit().identifyPlant(
-                    "0uhjV9XFtRyiHaQWtXfKJGoSWiB7vy2uM12a8yPtiI4qGdFFlE",
+                    apiKey,
                     request,
                     details
                 )

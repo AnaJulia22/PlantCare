@@ -39,13 +39,14 @@ fun PlantFormScreen(
 ) {
     val context = LocalContext.current
     val dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+    val timeFormatter = DateTimeFormatter.ofPattern("HH:mm")
     var selectedDate by remember {
         mutableStateOf(
             uiState.lastWatered?.takeIf { it.isNotEmpty() }?.let {
                 try {
                     LocalDate.parse(it)
                 } catch (e: Exception) {
-                    LocalDate.now()
+                    null
                 }
             } ?: LocalDate.now()
         )
@@ -57,7 +58,7 @@ fun PlantFormScreen(
                 try {
                     LocalTime.parse(it)
                 } catch (e: Exception) {
-                    LocalTime.now()
+                    null
                 }
             } ?: LocalTime.now()
         )
@@ -66,12 +67,16 @@ fun PlantFormScreen(
     var showTimePicker by remember { mutableStateOf(false) }
     var nextWatering by remember { mutableStateOf(0L) }
 
+    val date: LocalDate = LocalDate.now()
+
     LaunchedEffect(uiState.wateringFrequency, selectedDate) {
         if (uiState.wateringFrequency.isNotEmpty()) {
             val frequency = uiState.wateringFrequency.toIntOrNull() ?: 0
             println("Selected Date: $selectedDate")
+            date.plusDays(frequency.toLong())
             nextWatering = if (frequency > 0) {
                 selectedDate.plusDays(frequency.toLong()).toEpochDay()
+
             } else {
                 0L
             }
@@ -147,7 +152,7 @@ fun PlantFormScreen(
                                 } catch (e: Exception) {
                                     "Invalid date"
                                 }
-                            } ?: "00/00/0000"
+                            } ?: "--/--/----"
                         }",
                         fontSize = 16.sp,
                         color = Color.Black,
@@ -161,13 +166,31 @@ fun PlantFormScreen(
                     val nextWateringFormatted =
                         LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter)
                     Text(
-                        text = "Next Watering Date: $nextWateringFormatted",
+                        text = "Next Watering Date:  ${
+                            if (uiState.nextWatering > 0) {
+                                LocalDate.ofEpochDay(uiState.nextWatering).format(dateFormatter)
+                            } else {
+                                "--/--/----"
+                            }
+                        }",
                         fontSize = 16.sp,
                         color = Color.Black
                     )
                     Spacer(modifier = Modifier.size(8.dp))
                     Text(
-                        text = "Watering Time: $time",
+                        text = "Watering Time: ${
+                            uiState.timeToWater?.let { time ->
+                                println("[DEBUG] Displaying time from state: $time")
+                                try {
+                                    LocalTime.parse(time).format(timeFormatter)
+                                } catch (e: Exception) {
+                                    println("[DEBUG] Error formatting time: ${e.message}")
+                                    "--:--"
+                                }
+                            } ?: "--:--".also {
+                                println("[DEBUG] No time set in state")
+                            }
+                        }",
                         fontSize = 16.sp,
                         color = Color.Black,
                         modifier = Modifier
@@ -219,10 +242,11 @@ fun PlantFormScreen(
             }
         }
         val onSave: () -> Unit = {
+            print(uiState.nextWatering)
             WorkScheduler.scheduleWateringReminder(
                 context,
                 selectedTime,
-                selectedDate,
+                date,
                 uiState.name
             )
             onSaveClick()
@@ -243,7 +267,7 @@ fun PlantFormScreen(
                 Text(text = "Cancel")
             }
 
-                SaveButton(onSaveClick = onSave)
+            SaveButton(onSaveClick = onSave)
 
         }
 

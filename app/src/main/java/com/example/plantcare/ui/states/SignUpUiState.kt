@@ -7,5 +7,7 @@ data class SignUpUiState(
     val onEmailChange: (String) -> Unit = {},
     val onPasswordChange: (String) -> Unit = {},
     val onConfirmPasswordChange: (String) -> Unit = {},
+    val isShowPassword: Boolean = false,
+    val onTogglePasswordVisibility: () -> Unit = {},
     val error: String? = null,
 )

@@ -11,7 +11,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.plantcare.database.PlantDataBase
+import com.example.plantcare.Authentication.GoogleAuthClient
 import com.example.plantcare.ui.Navigation.authGraph
 import com.example.plantcare.ui.Navigation.authGraphRoute
 import com.example.plantcare.ui.Navigation.homeGraph
@@ -20,7 +20,6 @@ import com.example.plantcare.ui.Navigation.navigateToCamera
 import com.example.plantcare.ui.Navigation.navigateToEditPlantForm
 import com.example.plantcare.ui.Navigation.navigateToHomeGraph
 import com.example.plantcare.ui.Navigation.navigateToNewPlantForm
-import com.example.plantcare.ui.Navigation.navigateToPlantIdentifier
 import com.example.plantcare.ui.Navigation.navigateToPlantResult
 import com.example.plantcare.ui.Navigation.navigateToPlantResultDetails
 import com.example.plantcare.ui.Navigation.navigateToSignIn

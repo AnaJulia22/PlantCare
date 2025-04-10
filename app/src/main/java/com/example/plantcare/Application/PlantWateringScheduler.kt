@@ -31,16 +31,9 @@ class PlantWateringScheduler (context: Context, workerParams: WorkerParameters) 
 
         val plantName = inputData.getString("PLANT_NAME") ?: "Sua planta"
 
-        Log.d("WorkManagerTest", "Hora de regar a planta: $plantName!")
-
         sendNotification(applicationContext, plantName)
 
         return Result.success()
-    }
-
-    suspend fun waterPlant(plant: PlantEntity, plantDao: PlantDao) {
-        val updatedPlant = plant.copy(lastWatered = System.currentTimeMillis().toString())
-        plantDao.update(updatedPlant)
     }
 
     private fun sendNotification(context: Context, plantName: String) {
@@ -76,6 +69,5 @@ class PlantWateringScheduler (context: Context, workerParams: WorkerParameters) 
 
         notificationManager.notify(plantName.hashCode(), notification)
     }
-
 
 }
